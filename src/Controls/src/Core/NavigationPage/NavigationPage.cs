@@ -769,7 +769,7 @@ namespace Microsoft.Maui.Controls
 					}).FireAndForget();
 			}
 
-			protected async override Task<Page> OnPopAsync(bool animated)
+			protected override async Task<Page> OnPopAsync(bool animated)
 			{
 				if (Owner.InternalChildren.Count == 1)
 				{
