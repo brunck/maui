@@ -15,7 +15,7 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 	public IReadOnlyList<IView> NavigationStack { get; private set; } = new List<IView>();
 
 	PlatformNavigationController? _platformNavigationController;
-	UIViewController? IPlatformViewHandler.ViewController => _platformNavigationController;
+	UIViewController? IPlatformViewHandler.ViewController => _platformNavigationController; // TODO: figure out if this is correct - see NavigationRenderer.CreateViewControllerForPage()
 
 	protected override UIView CreatePlatformView()
 	{
@@ -23,7 +23,7 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 
 		if (_platformNavigationController.View is null)
 		{
-			throw new NullReferenceException("NativeNavigationController.View is null.");
+			throw new NullReferenceException("PlatformNavigationController.View is null.");
 		}
 
 		return _platformNavigationController.View;
