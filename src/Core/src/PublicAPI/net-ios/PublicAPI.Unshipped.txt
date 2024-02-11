@@ -44,6 +44,12 @@ Microsoft.Maui.Platform.KeyboardAutoManagerScroll
 Microsoft.Maui.Platform.MauiImageView.MauiImageView(Microsoft.Maui.Handlers.IImageHandler! handler) -> void
 Microsoft.Maui.Platform.MauiView.CrossPlatformLayout.get -> Microsoft.Maui.ICrossPlatformLayout?
 Microsoft.Maui.Platform.MauiView.CrossPlatformLayout.set -> void
+Microsoft.Maui.Platform.NavigationDelegate
+Microsoft.Maui.Platform.PlatformNavigationController
+Microsoft.Maui.Platform.PlatformNavigationController.PlatformNavigationController(Microsoft.Maui.Handlers.NavigationViewHandler! handler) -> void
+Microsoft.Maui.Platform.StackNavigationManager
+Microsoft.Maui.Platform.StackNavigationManager.MauiContext.get -> Microsoft.Maui.IMauiContext!
+Microsoft.Maui.Platform.StackNavigationManager.StackNavigationManager(Microsoft.Maui.IMauiContext! mauiContext) -> void
 Microsoft.Maui.SizeRequest.Equals(Microsoft.Maui.SizeRequest other) -> bool
 Microsoft.Maui.Platform.MauiScrollView
 Microsoft.Maui.Platform.MauiScrollView.MauiScrollView() -> void
@@ -158,3 +164,5 @@ Microsoft.Maui.Platform.MauiView.IsMeasureValid(double widthConstraint, double h
 Microsoft.Maui.Platform.UIEdgeInsetsExtensions
 static Microsoft.Maui.Platform.UIEdgeInsetsExtensions.ToThickness(this UIKit.UIEdgeInsets insets) -> Microsoft.Maui.Thickness
 override Microsoft.Maui.Handlers.BorderHandler.PlatformArrange(Microsoft.Maui.Graphics.Rect rect) -> void
+virtual Microsoft.Maui.Platform.PlatformNavigationController.RequestNavigation(Microsoft.Maui.NavigationRequest! request) -> void
+virtual Microsoft.Maui.Platform.StackNavigationManager.RequestNavigation(Microsoft.Maui.NavigationRequest! request) -> void

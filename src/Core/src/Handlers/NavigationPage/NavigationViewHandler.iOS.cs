@@ -10,7 +10,10 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 	   [PlatformConfiguration.iOSSpecific.NavigationPage.PrefersLargeTitlesProperty.PropertyName] = NavigationPage.MapPrefersLargeTitles,
 	   [PlatformConfiguration.iOSSpecific.NavigationPage.IsNavigationBarTranslucentProperty.PropertyName] = NavigationPage.MapIsNavigationBarTranslucent,
 	 */
-	public IStackNavigationView NavigationView => VirtualView;
+
+	internal StackNavigationManager? NavigationManager { get; private set; }
+
+	//public IStackNavigationView NavigationView => VirtualView;
 
 	public IReadOnlyList<IView> NavigationStack { get; private set; } = new List<IView>();
 
@@ -20,6 +23,7 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 	protected override UIView CreatePlatformView()
 	{
 		_platformNavigationController ??= new PlatformNavigationController(this);
+		NavigationManager = CreateNavigationManager();
 
 		if (_platformNavigationController.View is null)
 		{
@@ -31,14 +35,24 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 
 	protected override void ConnectHandler(UIView platformView)
 	{
-		base.ConnectHandler(platformView);
+		if (_platformNavigationController is null)
+		{
+			throw new NullReferenceException("NavigationController is null.");
+		}
 
-		_platformNavigationController?.Connect(VirtualView);
+		NavigationManager?.Connect(VirtualView, _platformNavigationController);
+		base.ConnectHandler(platformView);
+	}
+
+	protected override void DisconnectHandler(UIView platformView)
+	{
+		NavigationManager?.Disconnect(VirtualView, _platformNavigationController!);
+		base.DisconnectHandler(platformView);
 	}
 
 	void RequestNavigation(NavigationRequest request)
 	{
-		_platformNavigationController?.RequestNavigation(request);
+		NavigationManager?.RequestNavigation(request);
 	}
 			
 	public static void RequestNavigation(INavigationViewHandler arg1, IStackNavigation arg2, object? arg3)
@@ -53,4 +67,7 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 			throw new InvalidOperationException("Args must be NavigationRequest");
 		}
 	}
+
+	protected virtual StackNavigationManager CreateNavigationManager() =>
+		new StackNavigationManager(MauiContext ?? throw new InvalidOperationException("MauiContext cannot be null"));
 }
