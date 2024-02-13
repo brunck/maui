@@ -4,7 +4,7 @@ using UIKit;
 
 namespace Microsoft.Maui.Platform;
 
-public class PlatformNavigationController : UINavigationController
+internal class PlatformNavigationController : UINavigationController
 {
 	NavigationViewHandler Handler { get; }
 
@@ -17,7 +17,7 @@ public class PlatformNavigationController : UINavigationController
 	
 }
 
-public class NavigationDelegate : UINavigationControllerDelegate
+internal class NavigationDelegate : UINavigationControllerDelegate
 {
 	WeakReference<PlatformNavigationController> NavigationController { get; }
 

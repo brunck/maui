@@ -6,7 +6,7 @@ namespace Microsoft.Maui.Platform;
 
 public class StackNavigationManager
 {
-	public IMauiContext MauiContext { get; }
+	IMauiContext MauiContext { get; }
 
 	IReadOnlyList<IView> NavigationStack { get; set; } = new List<IView>();
 	IStackNavigationView? NavigationView { get; set; }
@@ -48,28 +48,35 @@ public class StackNavigationManager
 		return;
 	}
 
-	private void SyncNativeStackWithNewStack(NavigationRequest request)
+	void SyncNativeStackWithNewStack(NavigationRequest request)
 	{
 		var newStack = new List<UIViewController>();
 		foreach (var page in request.NavigationStack)
 		{
-			if (page.Handler is PageHandler handler)
+			UIViewController? viewController = null;
+			if (page is IElement element)
 			{
-				if (handler.ViewController == null)
+				if (element.Handler is IPlatformViewHandler nvh && nvh.ViewController != null)
 				{
-					throw new InvalidOperationException("Page handler's ViewController cannot be null.");
+					viewController = nvh.ViewController;
 				}
-				newStack.Add(handler.ViewController);
+				else
+				{
+					var uiView = page.ToPlatform(MauiContext);
+					viewController = uiView.FindTopController<UIViewController>();
+				}
 			}
 			else
 			{
-				if (page.Handler is FlyoutViewHandler)
-				{
-					System.Diagnostics.Trace.WriteLine($"Pushing a FlyoutPage onto a NavigationPage is not a supported UI pattern on iOS. " +
-						"Please see https://developer.apple.com/documentation/uikit/uisplitviewcontroller for more details.");
-				}
-				throw new InvalidOperationException($"Page Handler must be a {nameof(PageHandler)}.");
+				throw new InvalidOperationException("Page must be an IElement");
 			}
+
+			if (viewController == null)
+			{
+				throw new InvalidOperationException("ViewController cannot be null.");
+			}
+
+			newStack.Add(viewController);
 		}
 		NavigationController!.SetViewControllers([.. newStack], request.Animated);
 	}

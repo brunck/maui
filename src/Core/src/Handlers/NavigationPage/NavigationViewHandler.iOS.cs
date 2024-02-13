@@ -13,6 +13,8 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 
 	internal StackNavigationManager? NavigationManager { get; private set; }
 
+	public IStackNavigationView NavigationView => VirtualView;
+
 	public IReadOnlyList<IView> NavigationStack { get; private set; } = new List<IView>();
 
 	PlatformNavigationController? _platformNavigationController;
