@@ -54,16 +54,25 @@ public class StackNavigationManager
 		foreach (var page in request.NavigationStack)
 		{
 			UIViewController? viewController = null;
+			IPlatformViewHandler? handler = null;
+
 			if (page is IElement element)
 			{
 				if (element.Handler is IPlatformViewHandler nvh && nvh.ViewController != null)
 				{
+					handler = nvh;
 					viewController = nvh.ViewController;
 				}
 				else
 				{
-					var uiView = page.ToPlatform(MauiContext);
-					viewController = uiView.FindTopController<UIViewController>();
+					handler = page.ToHandler(MauiContext);
+					viewController = handler.ViewController;
+				}
+
+				if (handler is FlyoutViewHandler flyoutHandler)
+				{
+					System.Diagnostics.Trace.WriteLine($"Pushing a FlyoutPage onto a NavigationPage is not a supported UI pattern on iOS. " +
+						"Please see https://developer.apple.com/documentation/uikit/uisplitviewcontroller for more details.");
 				}
 			}
 			else
