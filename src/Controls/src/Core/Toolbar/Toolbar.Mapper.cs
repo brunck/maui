@@ -19,7 +19,7 @@ namespace Microsoft.Maui.Controls
 
 		internal static void RemapForControls()
 		{
-#if ANDROID || WINDOWS || TIZEN // TODO: iOS
+#if ANDROID || WINDOWS || TIZEN || IOS || MACCATALYST
 			ToolbarHandler.Mapper.ReplaceMapping<Toolbar, IToolbarHandler>(nameof(IToolbar.IsVisible), MapIsVisible);
 			ToolbarHandler.Mapper.ReplaceMapping<Toolbar, IToolbarHandler>(nameof(IToolbar.BackButtonVisible), MapBackButtonVisible);
 			ToolbarHandler.Mapper.ReplaceMapping<Toolbar, IToolbarHandler>(nameof(Toolbar.TitleIcon), MapTitleIcon);
