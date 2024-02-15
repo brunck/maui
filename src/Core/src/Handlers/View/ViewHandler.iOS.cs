@@ -108,6 +108,23 @@ namespace Microsoft.Maui.Handlers
 			UpdateTransformation(handler, view);
 		}
 
+		public static void MapToolbar(IViewHandler handler, IView view)
+		{
+			if (handler.VirtualView is not IToolbarElement te || te.Toolbar == null)
+			{
+				return;
+			}
+
+			MapToolbar(handler, te);
+		}
+
+		internal static void MapToolbar(IElementHandler handler, IToolbarElement te)
+		{
+			_ = handler.MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by base class.");
+
+			te.Toolbar?.ToPlatform(handler.MauiContext);
+		}
+
 		internal static void UpdateTransformation(IViewHandler handler, IView view)
 		{
 			handler.ToPlatform().UpdateTransformation(view);

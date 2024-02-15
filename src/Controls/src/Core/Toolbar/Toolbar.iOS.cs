@@ -25,16 +25,5 @@ namespace Microsoft.Maui.Controls
 			}
             toolbar.NavigationController.SetNavigationBarHidden(!toolbar.IsVisible, false);
         }
-
-        //public Toolbar()
-        //{
-        //    //if (Handler is ToolbarHandler handler)
-        //    //{
-        //    //    handler.ParentPlatformViewHandler
-        //    //}
-
-            
-
-        //}
     }
 }
