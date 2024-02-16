@@ -122,7 +122,8 @@ namespace Microsoft.Maui.Handlers
 		{
 			_ = handler.MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by base class.");
 
-			te.Toolbar?.ToPlatform(handler.MauiContext);
+			var navManager = handler.MauiContext.GetNavigationManager();
+			navManager?.SetToolbarElement(te);
 		}
 
 		internal static void UpdateTransformation(IViewHandler handler, IView view)

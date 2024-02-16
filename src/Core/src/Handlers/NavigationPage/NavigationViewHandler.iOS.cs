@@ -11,7 +11,9 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 	   [PlatformConfiguration.iOSSpecific.NavigationPage.IsNavigationBarTranslucentProperty.PropertyName] = NavigationPage.MapIsNavigationBarTranslucent,
 	 */
 
-	internal StackNavigationManager? NavigationManager { get; private set; }
+	internal StackNavigationManager? StackNavigationManager { get; private set; }
+
+	internal NavigationManager? NavigationManager => MauiContext?.GetNavigationManager();
 
 	public IStackNavigationView NavigationView => VirtualView;
 
@@ -23,12 +25,14 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 	protected override UIView CreatePlatformView()
 	{
 		_platformNavigationController ??= new PlatformNavigationController(this);
-		NavigationManager = CreateNavigationManager();
+		StackNavigationManager = CreateStackNavigationManager();
 
 		if (_platformNavigationController.View is null)
 		{
 			throw new NullReferenceException("PlatformNavigationController.View is null.");
 		}
+
+		NavigationManager?.SetNavigationController(_platformNavigationController);
 
 		return _platformNavigationController.View;
 	}
@@ -40,19 +44,19 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 			throw new NullReferenceException("PlatformNavigationController is null.");
 		}
 
-		NavigationManager?.Connect(VirtualView, _platformNavigationController);
+		StackNavigationManager?.Connect(VirtualView, _platformNavigationController);
 		base.ConnectHandler(platformView);
 	}
 
 	protected override void DisconnectHandler(UIView platformView)
 	{
-		NavigationManager?.Disconnect(VirtualView, _platformNavigationController!);
+		StackNavigationManager?.Disconnect(VirtualView, _platformNavigationController!);
 		base.DisconnectHandler(platformView);
 	}
 
 	void RequestNavigation(NavigationRequest request)
 	{
-		NavigationManager?.RequestNavigation(request);
+		StackNavigationManager?.RequestNavigation(request);
 	}
 			
 	public static void RequestNavigation(INavigationViewHandler arg1, IStackNavigation arg2, object? arg3)
@@ -68,6 +72,6 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 		}
 	}
 
-	protected virtual StackNavigationManager CreateNavigationManager() =>
+	protected virtual StackNavigationManager CreateStackNavigationManager() =>
 		new StackNavigationManager(MauiContext ?? throw new InvalidOperationException("MauiContext cannot be null"));
 }
