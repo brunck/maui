@@ -15,7 +15,7 @@ namespace Microsoft.Maui.Controls
 			{
 				throw new NullReferenceException("NavigationController is null.");
 			}
-			toolbar.NavigationController?.SetNavigationBarHidden(!toolbar.IsVisible, false);
+			toolbar.NavigationController?.SetNavigationBarHidden(!toolbar.IsVisible, true);
 		}
 	}
 }

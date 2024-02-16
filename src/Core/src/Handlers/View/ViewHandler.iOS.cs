@@ -120,7 +120,14 @@ namespace Microsoft.Maui.Handlers
 
 		internal static void MapToolbar(IElementHandler handler, IToolbarElement te)
 		{
-			_ = handler.MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by base class.");
+			if (te.Toolbar == null)
+			{
+				return;
+			}
+
+			_ = handler.MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by the base class.");
+
+			_ = te.Toolbar.ToPlatform(handler.MauiContext);
 
 			var navManager = handler.MauiContext.GetNavigationManager();
 			navManager?.SetToolbarElement(te);

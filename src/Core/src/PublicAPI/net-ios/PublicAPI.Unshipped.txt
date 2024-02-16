@@ -7,7 +7,6 @@ Microsoft.Maui.Handlers.ISwipeItemMenuItemHandler.SourceLoader.get -> Microsoft.
 Microsoft.Maui.Handlers.SwipeItemButton
 Microsoft.Maui.Handlers.SwipeItemButton.FrameChanged -> System.EventHandler?
 Microsoft.Maui.Handlers.SwipeItemButton.SwipeItemButton() -> void
-Microsoft.Maui.Handlers.ToolbarHandler.ParentPlatformViewHandler.get -> Microsoft.Maui.IPlatformViewHandler?
 Microsoft.Maui.IKeyboardAccelerator
 Microsoft.Maui.IKeyboardAccelerator.Key.get -> string?
 Microsoft.Maui.IKeyboardAccelerator.Modifiers.get -> Microsoft.Maui.KeyboardAcceleratorModifiers
@@ -45,6 +44,12 @@ Microsoft.Maui.Platform.KeyboardAutoManagerScroll
 Microsoft.Maui.Platform.MauiImageView.MauiImageView(Microsoft.Maui.Handlers.IImageHandler! handler) -> void
 Microsoft.Maui.Platform.MauiView.CrossPlatformLayout.get -> Microsoft.Maui.ICrossPlatformLayout?
 Microsoft.Maui.Platform.MauiView.CrossPlatformLayout.set -> void
+Microsoft.Maui.Platform.NavigationManager
+Microsoft.Maui.Platform.NavigationManager.NavigationController.get -> UIKit.UINavigationController?
+Microsoft.Maui.Platform.NavigationManager.NavigationManager(Microsoft.Maui.IMauiContext! mauiContext) -> void
+Microsoft.Maui.Platform.NavigationManager.SetNavigationController(UIKit.UINavigationController! navigationController) -> void
+Microsoft.Maui.Platform.NavigationManager.SetToolbarElement(Microsoft.Maui.IToolbarElement! toolbarElement) -> void
+Microsoft.Maui.Platform.NavigationManager.ToolbarElement.get -> Microsoft.Maui.IToolbarElement?
 Microsoft.Maui.Platform.StackNavigationManager
 Microsoft.Maui.Platform.StackNavigationManager.StackNavigationManager(Microsoft.Maui.IMauiContext! mauiContext) -> void
 Microsoft.Maui.SizeRequest.Equals(Microsoft.Maui.SizeRequest other) -> bool
