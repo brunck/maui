@@ -6,7 +6,7 @@ namespace Microsoft.Maui.Platform;
 
 internal class PlatformNavigationController : UINavigationController
 {
-	NavigationViewHandler Handler { get; }
+	protected NavigationViewHandler Handler { get; }
 
 	public PlatformNavigationController(NavigationViewHandler handler)
 	{
@@ -15,16 +15,18 @@ internal class PlatformNavigationController : UINavigationController
 	}
 
 	[Export("navigationBar:shouldPopItem:")]
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Specific to instance")]
-	protected bool ShouldPopItem(UINavigationBar _, UINavigationItem __)
+	protected virtual bool ShouldPopItem(UINavigationBar _, UINavigationItem __)
 	{
-		//_uiRequestedPop = true;
-		// SendBackButtonPressed();?
-		return true;
+		BackButtonClicked();
+		return false; // the pop happens in the NavigationPage via the call above
+	}
+
+	protected virtual void BackButtonClicked()
+	{
+		var window = (Handler.MauiContext?.GetPlatformWindow().GetWindow()) ?? throw new InvalidOperationException("Could not obtain Window.");
+		window.BackButtonClicked();
 	}
 }
-
-//MauiContext?.GetPlatformWindow().GetWindow();
 
 internal class NavigationDelegate : UINavigationControllerDelegate
 {
