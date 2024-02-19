@@ -15,7 +15,7 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 
 	internal NavigationManager? NavigationManager => MauiContext?.GetNavigationManager();
 
-	public IStackNavigationView NavigationView => VirtualView;
+	//public IStackNavigationView NavigationView => VirtualView;
 
 	public IReadOnlyList<IView> NavigationStack { get; private set; } = new List<IView>();
 
@@ -58,6 +58,8 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 	{
 		StackNavigationManager?.RequestNavigation(request);
 	}
+
+	//MauiContext?.GetPlatformWindow().GetWindow();
 			
 	public static void RequestNavigation(INavigationViewHandler arg1, IStackNavigation arg2, object? arg3)
 	{

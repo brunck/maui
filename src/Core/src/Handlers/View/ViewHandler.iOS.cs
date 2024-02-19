@@ -127,7 +127,9 @@ namespace Microsoft.Maui.Handlers
 
 			_ = handler.MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by the base class.");
 
-			_ = te.Toolbar.ToPlatform(handler.MauiContext);
+			// We don't need this return value but we need to realize the handler
+			// otherwise the toolbar mapping doesn't work
+			_ = te.Toolbar.ToHandler(handler.MauiContext);
 
 			var navManager = handler.MauiContext.GetNavigationManager();
 			navManager?.SetToolbarElement(te);
