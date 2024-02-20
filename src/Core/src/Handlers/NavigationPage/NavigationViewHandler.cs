@@ -16,6 +16,9 @@ namespace Microsoft.Maui.Handlers
 	{
 		public static IPropertyMapper<IStackNavigationView, INavigationViewHandler> Mapper = new PropertyMapper<IStackNavigationView, INavigationViewHandler>(ViewMapper)
 		{
+#if IOS || MACCATALYST
+			[nameof(IToolbarElement.Toolbar)] = MapToolbar,
+#endif
 		};
 
 		public static CommandMapper<IStackNavigationView, INavigationViewHandler> CommandMapper = new(ViewCommandMapper)

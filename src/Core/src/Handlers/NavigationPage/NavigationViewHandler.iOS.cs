@@ -15,8 +15,6 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 
 	internal NavigationManager? NavigationManager => MauiContext?.GetNavigationManager();
 
-	//public IStackNavigationView NavigationView => VirtualView;
-
 	public IReadOnlyList<IView> NavigationStack { get; private set; } = new List<IView>();
 
 	PlatformNavigationController? _platformNavigationController;
@@ -59,8 +57,6 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 		StackNavigationManager?.RequestNavigation(request);
 	}
 
-	//MauiContext?.GetPlatformWindow().GetWindow();
-			
 	public static void RequestNavigation(INavigationViewHandler arg1, IStackNavigation arg2, object? arg3)
 	{
 		if (arg1 is NavigationViewHandler platformHandler && arg3 is NavigationRequest nr)
@@ -72,6 +68,33 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 		{
 			throw new InvalidOperationException("Args must be NavigationRequest");
 		}
+	}
+
+	public static void MapToolbar(IViewHandler handler, IView view)
+	{
+		if (handler.VirtualView is not IToolbarElement te || te.Toolbar == null)
+		{
+			return;
+		}
+
+		MapToolbar(handler, te);
+	}
+
+	internal static void MapToolbar(IElementHandler handler, IToolbarElement te)
+	{
+		if (te.Toolbar == null)
+		{
+			return;
+		}
+
+		_ = handler.MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by the base class.");
+
+		// We don't need this return value but we need to realize the handler
+		// otherwise the toolbar mapping doesn't work
+		_ = te.Toolbar.ToHandler(handler.MauiContext);
+
+		var navManager = handler.MauiContext.GetNavigationManager();
+		navManager?.SetToolbarElement(te);
 	}
 
 	protected virtual StackNavigationManager CreateStackNavigationManager() =>
