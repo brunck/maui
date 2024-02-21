@@ -36,13 +36,13 @@ namespace Microsoft.Maui.Controls
 				throw new NullReferenceException("NavigationController is null.");
 			}
 
-			var navigationItem = toolbar.NavigationController.NavigationItem;
+			var navigationItem = toolbar.NavigationController.TopViewController.NavigationItem;
 			if (navigationItem.HidesBackButton == !toolbar.BackButtonVisible)
 			{
 				return;
 			}
 
-			navigationItem.SetHidesBackButton(!toolbar.BackButtonVisible, true);
+			navigationItem.HidesBackButton = !toolbar.BackButtonVisible;
 		}
 
 		public static void MapTitleIcon(IToolbarHandler arg1, Toolbar arg2)

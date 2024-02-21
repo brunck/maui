@@ -24,19 +24,9 @@ namespace Microsoft.Maui.Controls
 				Platform.NavigationPageExtensions.UpdateIsNavigationBarTranslucent(navigationController, navigationPage);
 		}
 
-		public static void MapToolbar(IViewHandler handler, IView view)
+		public static void MapToolbar(IElementHandler handler, IToolbarElement element)
 		{
 			if (handler.VirtualView is not IToolbarElement te || te.Toolbar == null)
-			{
-				return;
-			}
-
-			MapToolbar(handler, te);
-		}
-
-		internal static void MapToolbar(IElementHandler handler, IToolbarElement te)
-		{
-			if (te.Toolbar == null)
 			{
 				return;
 			}
