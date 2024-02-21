@@ -1,10 +1,10 @@
 ﻿using System;
-using Microsoft.Maui.Graphics;
 using CoreGraphics;
+using Microsoft.Maui.Graphics;
 using UIKit;
 using PointF = CoreGraphics.CGPoint;
-using SizeF = CoreGraphics.CGSize;
 using RectangleF = CoreGraphics.CGRect;
+using SizeF = CoreGraphics.CGSize;
 
 namespace Microsoft.Maui.Controls
 {
@@ -16,17 +16,24 @@ namespace Microsoft.Maui.Controls
 
 		public static void MapIsVisible(IToolbarHandler handler, Toolbar toolbar)
 		{
-			if (toolbar.NavigationController == null)
+			if (toolbar == null)
+			{
+				return;
+			}
+
+			if (toolbar?.NavigationController == null)
 			{
 				throw new NullReferenceException("NavigationController is null.");
 			}
-			// TODO: the view underneath this jumps up when the toolbar is hidden and down when it's shown
-			// rather than smoothly animating the transition. It's not clear how to fix this - the renderer has this code
-			// before the call to SetNavigationBarHidden():
-			// // prevent bottom content "jumping"
-			// current.IgnoresContainerArea = !hasNavBar;
 
-			toolbar.NavigationController?.SetNavigationBarHidden(!toolbar.IsVisible, true);
+			if (toolbar.NavigationController.NavigationBarHidden == toolbar.IsVisible)
+			{
+				// TODO: the view underneath this jumps up when the toolbar is hidden and down when it's shown
+				// rather than smoothly animating the transition. It's not clear how to fix this
+				// Also, when the toolbar is hidden and another page is pushed, the toolbar for the page that's about to hide
+				// gets its toolbar back right before the animation of the push of the new page
+				toolbar.NavigationController.SetNavigationBarHidden(!toolbar.IsVisible, true);
+			}
 		}
 
 		public static void MapBackButtonVisible(IToolbarHandler handler, Toolbar toolbar)
@@ -49,48 +56,6 @@ namespace Microsoft.Maui.Controls
 		{
 
 		}
-
-		/*
-		 * Called when:
-		 * 
-		 * as part of OnPushAsync (parenting controller CreateViewControllerForPage())
-		 * as part of InsertPageBefore (parenting controller CreateViewControllerForPage())
-		 * BackButtonTitleProperty changed
-		 * TitleIconImageSourceProperty or TitleViewProperty changed - (parenting controller in "child" property changed)
-		 * part of UpdateHasBackButton() - if (!(OperatingSystem.IsIOSVersionAtLeast(11) || OperatingSystem.IsMacCatalystVersionAtLeast(11)) || n._parentFlyoutPage != null)
-		 *		I don't think any of those conditions will happen here for us
-		 */
-
-		//protected void UpdateTitleArea(Page page)
-		//{
-		//	if (page == null)
-		//		return;
-
-		//	ImageSource titleIcon = NavigationPage.GetTitleIconImageSource(page);
-		//	View titleView = NavigationPage.GetTitleView(page);
-		//	bool needContainer = titleView != null || titleIcon != null;
-
-		//	string backButtonText = NavigationPage.GetBackButtonTitle(page);
-		//	bool isBackButtonTextSet = page.IsSet(NavigationPage.BackButtonTitleProperty);
-
-		//	// First page and we have a flyout detail to contend with
-		//	UpdateLeftBarButtonItem();
-		//	UpdateBackButtonTitle(page.Title, backButtonText);
-
-		//	//var hadTitleView = NavigationItem.TitleView != null;
-		//	ClearTitleViewContainer();
-		//	if (needContainer)
-		//	{
-		//		NavigationRenderer n;
-		//		if (!_navigation.TryGetTarget(out n))
-		//			return;
-
-		//		NavigationTitleAreaContainer titleViewContainer = new NavigationTitleAreaContainer(titleView, n.NavigationBar);
-
-		//		UpdateTitleImage(titleViewContainer, titleIcon);
-		//		NavigationItem.TitleView = titleViewContainer;
-		//	}
-		//}
 	}
 
 	internal class NavigationTitleAreaContainer : UIView
