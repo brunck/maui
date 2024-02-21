@@ -240,6 +240,9 @@ namespace Microsoft.Maui.Controls.Hosting
 			RadioButton.RemapForControls();
 			FlyoutPage.RemapForControls();
 			Toolbar.RemapForControls();
+#if IOS || MACCATALYST
+			NavigationPage.RemapForControls();
+#endif
 			Window.RemapForControls();
 			Editor.RemapForControls();
 			Entry.RemapForControls();

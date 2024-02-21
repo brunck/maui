@@ -28,7 +28,7 @@ namespace Microsoft.Maui.Handlers
 			[nameof(IWindow.MinimumWidth)] = MapMinimumWidth,
 			[nameof(IWindow.MinimumHeight)] = MapMinimumHeight,
 #endif
-#if ANDROID || WINDOWS || TIZEN
+#if ANDROID || WINDOWS || TIZEN || IOS || MACCATALYST
 			[nameof(IToolbarElement.Toolbar)] = MapToolbar,
 #endif
 #if WINDOWS || IOS

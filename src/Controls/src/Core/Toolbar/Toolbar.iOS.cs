@@ -61,36 +61,36 @@ namespace Microsoft.Maui.Controls
 		 *		I don't think any of those conditions will happen here for us
 		 */
 
-		protected void UpdateTitleArea(Page page)
-		{
-			if (page == null)
-				return;
+		//protected void UpdateTitleArea(Page page)
+		//{
+		//	if (page == null)
+		//		return;
 
-			ImageSource titleIcon = NavigationPage.GetTitleIconImageSource(page);
-			View titleView = NavigationPage.GetTitleView(page);
-			bool needContainer = titleView != null || titleIcon != null;
+		//	ImageSource titleIcon = NavigationPage.GetTitleIconImageSource(page);
+		//	View titleView = NavigationPage.GetTitleView(page);
+		//	bool needContainer = titleView != null || titleIcon != null;
 
-			string backButtonText = NavigationPage.GetBackButtonTitle(page);
-			bool isBackButtonTextSet = page.IsSet(NavigationPage.BackButtonTitleProperty);
+		//	string backButtonText = NavigationPage.GetBackButtonTitle(page);
+		//	bool isBackButtonTextSet = page.IsSet(NavigationPage.BackButtonTitleProperty);
 
-			// First page and we have a flyout detail to contend with
-			UpdateLeftBarButtonItem();
-			UpdateBackButtonTitle(page.Title, backButtonText);
+		//	// First page and we have a flyout detail to contend with
+		//	UpdateLeftBarButtonItem();
+		//	UpdateBackButtonTitle(page.Title, backButtonText);
 
-			//var hadTitleView = NavigationItem.TitleView != null;
-			ClearTitleViewContainer();
-			if (needContainer)
-			{
-				NavigationRenderer n;
-				if (!_navigation.TryGetTarget(out n))
-					return;
+		//	//var hadTitleView = NavigationItem.TitleView != null;
+		//	ClearTitleViewContainer();
+		//	if (needContainer)
+		//	{
+		//		NavigationRenderer n;
+		//		if (!_navigation.TryGetTarget(out n))
+		//			return;
 
-				NavigationTitleAreaContainer titleViewContainer = new NavigationTitleAreaContainer(titleView, n.NavigationBar);
+		//		NavigationTitleAreaContainer titleViewContainer = new NavigationTitleAreaContainer(titleView, n.NavigationBar);
 
-				UpdateTitleImage(titleViewContainer, titleIcon);
-				NavigationItem.TitleView = titleViewContainer;
-			}
-		}
+		//		UpdateTitleImage(titleViewContainer, titleIcon);
+		//		NavigationItem.TitleView = titleViewContainer;
+		//	}
+		//}
 	}
 
 	internal class NavigationTitleAreaContainer : UIView

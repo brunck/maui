@@ -1,9 +1,6 @@
 ﻿using System;
-using CoreGraphics;
 using Foundation;
 using UIKit;
-using Microsoft.Maui.Controls;
-using RectangleF = CoreGraphics.CGRect;
 
 namespace Microsoft.Maui.Platform;
 
