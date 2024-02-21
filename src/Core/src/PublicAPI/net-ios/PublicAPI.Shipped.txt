@@ -640,6 +640,7 @@ Microsoft.Maui.Handlers.MenuFlyoutSubItemHandlerUpdate.MenuElement.init -> void
 Microsoft.Maui.Handlers.MenuFlyoutSubItemHandlerUpdate.MenuFlyoutSubItemHandlerUpdate(int Index, Microsoft.Maui.IMenuElement! MenuElement) -> void
 Microsoft.Maui.Handlers.NavigationViewHandler
 Microsoft.Maui.Handlers.NavigationViewHandler.NavigationStack.get -> System.Collections.Generic.IReadOnlyList<Microsoft.Maui.IView!>!
+Microsoft.Maui.Handlers.NavigationViewHandler.NavigationView.get -> Microsoft.Maui.IStackNavigationView!
 Microsoft.Maui.Handlers.NavigationViewHandler.NavigationViewHandler() -> void
 Microsoft.Maui.Handlers.NavigationViewHandler.NavigationViewHandler(Microsoft.Maui.IPropertyMapper? mapper, Microsoft.Maui.CommandMapper? commandMapper) -> void
 Microsoft.Maui.Handlers.NavigationViewHandler.NavigationViewHandler(Microsoft.Maui.IPropertyMapper? mapper) -> void

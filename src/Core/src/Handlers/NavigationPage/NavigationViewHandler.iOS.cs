@@ -6,6 +6,7 @@ namespace Microsoft.Maui.Handlers;
 
 public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, UIView>, IPlatformViewHandler
 {
+		public IStackNavigationView NavigationView => ((IStackNavigationView)VirtualView);
 	/*
 	   [PlatformConfiguration.iOSSpecific.NavigationPage.PrefersLargeTitlesProperty.PropertyName] = NavigationPage.MapPrefersLargeTitles,
 	   [PlatformConfiguration.iOSSpecific.NavigationPage.IsNavigationBarTranslucentProperty.PropertyName] = NavigationPage.MapIsNavigationBarTranslucent,
