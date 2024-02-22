@@ -1,5 +1,6 @@
 ﻿using System;
 using CoreGraphics;
+using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Graphics;
 using UIKit;
 using PointF = CoreGraphics.CGPoint;
@@ -12,7 +13,7 @@ namespace Microsoft.Maui.Controls
 	{
 		NavigationManager? NavigationManager => Handler.MauiContext?.GetNavigationManager();
 
-		UINavigationController? NavigationController => NavigationManager?.NavigationController;
+		internal UINavigationController? NavigationController => NavigationManager?.NavigationController;
 
 		public static void MapIsVisible(IToolbarHandler handler, Toolbar toolbar)
 		{
@@ -52,9 +53,14 @@ namespace Microsoft.Maui.Controls
 			navigationItem.HidesBackButton = !toolbar.BackButtonVisible;
 		}
 
-		public static void MapTitleIcon(IToolbarHandler arg1, Toolbar arg2)
+		public static void MapTitleIcon(IToolbarHandler handler, Toolbar toolbar)
 		{
+			toolbar.UpdateTitleArea();
+		}
 
+		public static void MapTitleView(IToolbarHandler handler, Toolbar toolbar)
+		{
+			toolbar.UpdateTitleArea();
 		}
 	}
 
@@ -134,7 +140,7 @@ namespace Microsoft.Maui.Controls
 			}
 		}
 
-		public UIImageView Icon
+		public UIImageView? Icon
 		{
 			set
 			{
