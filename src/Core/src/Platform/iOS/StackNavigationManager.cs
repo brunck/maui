@@ -42,6 +42,43 @@ public class StackNavigationManager
 			throw new InvalidOperationException("NavigationController cannot be null.");
 		}
 
+		var currentNavStack = NavigationStack;
+		var incomingNavStack = request.NavigationStack;
+		var isInitialNavigation = currentNavStack.Count == 0;
+
+		if (isInitialNavigation)
+		{
+			SyncNativeStackWithNewStack(request);
+			NavigationStack = new List<IView>(request.NavigationStack);
+			NavigationView?.NavigationFinished(NavigationStack);
+			return;
+		}
+
+		if (currentNavStack.Count < incomingNavStack.Count)
+		{
+			NavigationController!.PushViewController(incomingNavStack[incomingNavStack.Count - 1].ToUIViewController(MauiContext), request.Animated);
+			NavigationStack = new List<IView>(request.NavigationStack);
+			NavigationView?.NavigationFinished(NavigationStack);
+			return;
+		}
+
+		if (currentNavStack.Count > incomingNavStack.Count)
+		{
+			// Pop to the target page
+			var targetIndex = currentNavStack.IndexOf(incomingNavStack[incomingNavStack.Count - 1]);
+			if (targetIndex == -1)
+			{
+				throw new InvalidOperationException("The target page is not in the current navigation stack.");
+			}
+
+			var targetViewController = NavigationStack[targetIndex].ToUIViewController(MauiContext);
+			NavigationController!.PopToViewController(targetViewController, request.Animated);
+			NavigationStack = new List<IView>(request.NavigationStack);
+			NavigationView?.NavigationFinished(NavigationStack);
+			return;
+		}
+
+		// The incoming and current stacks are the same length, so just sync the stacks
 		SyncNativeStackWithNewStack(request);
 		NavigationStack = new List<IView>(request.NavigationStack);
 		NavigationView?.NavigationFinished(NavigationStack);
