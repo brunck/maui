@@ -62,6 +62,11 @@ namespace Microsoft.Maui.Controls
 		{
 			toolbar.UpdateTitleArea();
 		}
+
+		public static void MapIconColor(IToolbarHandler handler, Toolbar toolbar)
+		{
+
+		}
 	}
 
 	internal class NavigationTitleAreaContainer : UIView

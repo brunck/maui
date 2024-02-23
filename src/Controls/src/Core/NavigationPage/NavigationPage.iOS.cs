@@ -37,8 +37,8 @@ namespace Microsoft.Maui.Controls
 			// otherwise the toolbar mapping doesn't work
 			_ = te.Toolbar.ToHandler(handler.MauiContext);
 
-			//var navManager = handler.MauiContext.GetNavigationManager();
-			//navManager?.SetToolbarElement(te);
+			var navManager = handler.MauiContext.GetNavigationManager();
+			navManager?.SetToolbarElement(te);
 		}
 	}
 }
