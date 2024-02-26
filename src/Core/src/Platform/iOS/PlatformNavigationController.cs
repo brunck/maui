@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Foundation;
 using UIKit;
 
@@ -6,11 +7,11 @@ namespace Microsoft.Maui.Platform;
 
 internal class PlatformNavigationController : UINavigationController
 {
-	protected NavigationViewHandler Handler { get; }
+	protected WeakReference<NavigationViewHandler> Handler { get; }
 
 	public PlatformNavigationController(NavigationViewHandler handler)
 	{
-		Handler = handler;
+		Handler = new WeakReference<NavigationViewHandler>(handler);
 		Delegate = new NavigationDelegate(this);
 	}
 
@@ -27,8 +28,62 @@ internal class PlatformNavigationController : UINavigationController
 
 	protected virtual void BackButtonClicked()
 	{
-		var window = (Handler.MauiContext?.GetPlatformWindow().GetWindow()) ?? throw new InvalidOperationException("Could not obtain Window.");
+		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+		{
+			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+		}
+		var window = (handler.MauiContext?.GetPlatformWindow().GetWindow()) ?? throw new InvalidOperationException("Could not obtain Window.");
 		window.BackButtonClicked();
+	}
+
+	public override void ViewWillAppear(bool animated)
+	{
+		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+		{
+			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+		}
+		
+		var toolbar = handler.NavigationManager?.ToolbarElement?.Toolbar;
+		if (toolbar?.IsVisible ?? throw new InvalidOperationException("Could not obtain Toolbar."))
+		{
+			this.UpdateNavigationBarVisibility(toolbar.IsVisible, animated);
+		}
+
+		base.ViewWillAppear(animated);
+	}
+
+	//public override void ViewWillLayoutSubviews()
+	//{
+	//	base.ViewWillLayoutSubviews();
+	//	if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+	//	{
+	//		throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+	//	}
+
+	//	/*
+	//	 UpdateToolBarVisible();
+
+	//		var navBarFrameBottom = Math.Min(NavigationBar.Frame.Bottom, 140);
+	//		var toolbar = _secondaryToolbar;
+
+	//		//save the state of the Current page we are calculating, this will fire before Current is updated
+	//		_hasNavigationBar = NavigationPage.GetHasNavigationBar(Current);
+	//	 */
+		
+	//	var toolbar = handler.NavigationManager?.ToolbarElement?.Toolbar ?? throw new InvalidOperationException("Could not obtain Toolbar.");
+		
+	//	// Use 0 if the NavBar is hidden or will be hidden
+	//	var toolbarY = NavigationBarHidden || NavigationBar.Translucent || !_hasNavigationBar ? 0 : navBarFrameBottom;
+	//	toolbar.Frame = new RectangleF(0, toolbarY, View.Frame.Width, toolbar.Frame.Height);
+	//}
+
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			Delegate.Dispose();
+		}
+		base.Dispose(disposing);
 	}
 }
 

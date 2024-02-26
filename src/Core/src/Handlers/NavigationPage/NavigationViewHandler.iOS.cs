@@ -50,6 +50,8 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 	protected override void DisconnectHandler(UIView platformView)
 	{
 		StackNavigationManager?.Disconnect(VirtualView, _platformNavigationController!);
+		_platformNavigationController?.Dispose();
+		_platformNavigationController = null;
 		base.DisconnectHandler(platformView);
 	}
 
