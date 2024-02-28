@@ -62,21 +62,23 @@ public class StackNavigationManager
 			return;
 		}
 
-		if (currentNavStack.Count > incomingNavStack.Count)
-		{
-			// Pop to the target page
-			var targetIndex = currentNavStack.IndexOf(incomingNavStack[incomingNavStack.Count - 1]);
-			if (targetIndex == -1)
-			{
-				throw new InvalidOperationException("The target page is not in the current navigation stack.");
-			}
+		//if (currentNavStack.Count > incomingNavStack.Count)
+		//{
+		//	//// Pop to the target page
+		//	//var targetIndex = currentNavStack.IndexOf(incomingNavStack[incomingNavStack.Count - 1]);
+		//	//if (targetIndex == -1)
+		//	//{
+		//	//	throw new InvalidOperationException("The target page is not in the current navigation stack.");
+		//	//}
 
-			var targetViewController = NavigationStack[targetIndex].ToUIViewController(MauiContext);
-			NavigationController!.PopToViewController(targetViewController, request.Animated);
-			NavigationStack = new List<IView>(request.NavigationStack);
-			NavigationView?.NavigationFinished(NavigationStack);
-			return;
-		}
+		//	//var viewController = NavigationStack[targetIndex].ToUIViewController(MauiContext);
+		//	//var targetViewController = viewController.ParentViewController;
+		//	//NavigationController!.PopToViewController(targetViewController, request.Animated);
+		//	NavigationController.PopViewController(request.Animated);
+		//	NavigationStack = new List<IView>(request.NavigationStack);
+		//	NavigationView?.NavigationFinished(NavigationStack);
+		//	return;
+		//}
 
 		// The incoming and current stacks are the same length, so just sync the stacks
 		SyncNativeStackWithNewStack(request);

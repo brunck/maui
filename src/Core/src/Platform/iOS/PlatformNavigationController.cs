@@ -99,11 +99,8 @@ class ParentViewController : UIViewController
 			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
 		}
 
-		var toolbar = handler.NavigationManager?.ToolbarElement?.Toolbar;
-		if (toolbar?.IsVisible ?? throw new InvalidOperationException("Could not obtain Toolbar."))
-		{
-			NavigationController?.UpdateNavigationBarVisibility(toolbar.IsVisible, animated);
-		}
+		var toolbar = (handler.NavigationManager?.ToolbarElement?.Toolbar) ?? throw new InvalidOperationException("Could not obtain Toolbar.");
+		NavigationController?.UpdateNavigationBarVisibility(toolbar.IsVisible, animated);
 
 		base.ViewWillAppear(animated);
 	}

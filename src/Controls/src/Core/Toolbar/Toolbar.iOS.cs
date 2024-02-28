@@ -60,6 +60,11 @@ namespace Microsoft.Maui.Controls
 		{
 
 		}
+
+		public static void MapBarBackground(IToolbarHandler handler, Toolbar toolbar)
+		{
+
+		}
 	}
 
 	internal class NavigationTitleAreaContainer : UIView
