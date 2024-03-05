@@ -97,16 +97,7 @@ public class StackNavigationManager
 
 			if (page is IElement element)
 			{
-				if (element.Handler is IPlatformViewHandler nvh && nvh.ViewController != null)
-				{
-					handler = nvh;
-					viewController = nvh.ViewController;
-				}
-				else
-				{
-					handler = page.ToHandler(MauiContext);
-					viewController = handler.ViewController;
-				}
+				viewController = page.ToUIViewController(MauiContext);
 
 				if (handler is FlyoutViewHandler flyoutHandler)
 				{
