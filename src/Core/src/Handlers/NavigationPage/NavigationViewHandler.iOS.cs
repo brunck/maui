@@ -33,7 +33,7 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 
 		NavigationManager?.SetNavigationController(_platformNavigationController);
 
-		return _platformNavigationController.View;
+		return _platformNavigationController.View; // TODO: maybe returning .View is not the best idea? Maybe we should return the NavigationController? Investigate.
 	}
 
 	protected override void ConnectHandler(UIView platformView)

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Drawing;
+using System.Linq;
+using CoreGraphics;
 using UIKit;
 
 namespace Microsoft.Maui.Controls.Platform
 {
 	internal static class ToolbarExtensions
 	{
-		public static void UpdateTitleArea(this Toolbar toolbar)
+		internal static void UpdateTitleArea(this Toolbar toolbar)
 		{
 			ImageSource titleIcon = toolbar.TitleIcon;
 			var titleView = toolbar.TitleView;
@@ -26,8 +29,198 @@ namespace Microsoft.Maui.Controls.Platform
 			toolbar.NavigationController.NavigationItem.TitleView = titleViewContainer;
 		}
 
-		/*
-		 void UpdateBarTextColor()
+		internal static void UpdateBarBackground(this UINavigationBar navigationBar, Toolbar toolbar)
+		{
+			var barBackgroundBrush = toolbar.BarBackground;
+			Graphics.Color? barBackgroundColor = null;
+
+			// if the brush has a solid color, treat it as a Color, so we can compute the alpha value
+			if (barBackgroundBrush is SolidColorBrush scb)
+			{
+				barBackgroundColor = scb.Color;
+				barBackgroundBrush = null;
+			}
+
+			if (OperatingSystem.IsIOSVersionAtLeast(13) || OperatingSystem.IsMacCatalystVersionAtLeast(13))
+			{
+				var navigationBarAppearance = navigationBar.StandardAppearance;
+				if (barBackgroundColor is null)
+				{
+					navigationBarAppearance.ConfigureWithOpaqueBackground();
+					navigationBarAppearance.BackgroundColor = ColorExtensions.BackgroundColor;
+					navigationBar.SetupDefaultNavigationBarAppearance();
+				}
+				else
+				{
+					if (barBackgroundColor.Alpha < 1f)
+					{
+						navigationBarAppearance.ConfigureWithTransparentBackground();
+					}
+					else
+					{
+						navigationBarAppearance.ConfigureWithOpaqueBackground();
+					}
+
+					navigationBarAppearance.BackgroundColor = barBackgroundColor.ToPlatform();
+				}
+
+				if (barBackgroundBrush is not null)
+				{
+					var backgroundImage = navigationBar.GetBackgroundImage(barBackgroundBrush);
+
+					navigationBarAppearance.BackgroundImage = backgroundImage;
+				}
+
+				navigationBar.CompactAppearance = navigationBarAppearance;
+				navigationBar.StandardAppearance = navigationBarAppearance;
+				navigationBar.ScrollEdgeAppearance = navigationBarAppearance;
+			}
+			else
+			{
+				if (barBackgroundColor?.Alpha == 0f)
+				{
+					navigationBar.SetTransparentNavigationBar();
+				}
+				else
+				{
+					// Set navigation bar background color
+					navigationBar.BarTintColor = barBackgroundColor == null
+						? UINavigationBar.Appearance.BarTintColor
+						: barBackgroundColor.ToPlatform();
+
+					var backgroundImage = navigationBar.GetBackgroundImage(barBackgroundBrush);
+					navigationBar.SetBackgroundImage(backgroundImage, UIBarMetrics.Default);
+				}
+			}
+		}
+
+		internal static void SetupDefaultNavigationBarAppearance(this UINavigationBar navBar)
+		{
+			if (!(OperatingSystem.IsIOSVersionAtLeast(13) || OperatingSystem.IsMacCatalystVersionAtLeast(13)))
+			{
+				return;
+			}
+
+			// We will use UINavigationBar.Appearance to infer settings that
+			// were already set to the navigation bar in older versions of
+			// iOS.
+			UINavigationBarAppearance navAppearance = navBar.StandardAppearance;
+
+			if (navAppearance.BackgroundColor == null)
+			{
+				UIColor? backgroundColor = navBar.BarTintColor;
+
+				navBar.StandardAppearance.BackgroundColor = backgroundColor;
+
+				if (navBar.ScrollEdgeAppearance != null)
+				{
+					navBar.ScrollEdgeAppearance.BackgroundColor = backgroundColor;
+				}
+
+				if (navBar.CompactAppearance != null)
+				{
+					navBar.CompactAppearance.BackgroundColor = backgroundColor;
+				}
+			}
+
+			if (navAppearance.BackgroundImage == null)
+			{
+				UIImage backgroundImage = navBar.GetBackgroundImage(UIBarMetrics.Default);
+
+				navBar.StandardAppearance.BackgroundImage = backgroundImage;
+
+				if (navBar.ScrollEdgeAppearance != null)
+				{
+					navBar.ScrollEdgeAppearance.BackgroundImage = backgroundImage;
+				}
+
+				if (navBar.CompactAppearance != null)
+				{
+					navBar.CompactAppearance.BackgroundImage = backgroundImage;
+				}
+			}
+
+			if (navAppearance.ShadowImage == null)
+			{
+				UIImage? shadowImage = navBar.ShadowImage;
+				UIColor clearColor = UIColor.Clear;
+
+				navBar.StandardAppearance.ShadowImage = shadowImage;
+
+				if (navBar.ScrollEdgeAppearance != null)
+				{
+					navBar.ScrollEdgeAppearance.ShadowImage = shadowImage;
+				}
+
+				if (navBar.CompactAppearance != null)
+				{
+					navBar.CompactAppearance.ShadowImage = shadowImage;
+				}
+
+				if (shadowImage != null && shadowImage.Size == SizeF.Empty)
+				{
+					navBar.StandardAppearance.ShadowColor = clearColor;
+
+					if (navBar.ScrollEdgeAppearance != null)
+					{
+						navBar.ScrollEdgeAppearance.ShadowColor = clearColor;
+					}
+
+					if (navBar.CompactAppearance != null)
+					{
+						navBar.CompactAppearance.ShadowColor = clearColor;
+					}
+				}
+			}
+
+			UIImage? backIndicatorImage = navBar.BackIndicatorImage;
+			UIImage? backIndicatorTransitionMaskImage = navBar.BackIndicatorTransitionMaskImage;
+
+			if (backIndicatorImage != null && backIndicatorImage.Size == SizeF.Empty)
+			{
+				backIndicatorImage = GetEmptyBackIndicatorImage();
+			}
+
+			if (backIndicatorTransitionMaskImage != null && backIndicatorTransitionMaskImage.Size == SizeF.Empty)
+			{
+				backIndicatorTransitionMaskImage = GetEmptyBackIndicatorImage();
+			}
+
+			navBar.CompactAppearance?.SetBackIndicatorImage(backIndicatorImage, backIndicatorTransitionMaskImage);
+			navBar.StandardAppearance.SetBackIndicatorImage(backIndicatorImage, backIndicatorTransitionMaskImage);
+			navBar.ScrollEdgeAppearance?.SetBackIndicatorImage(backIndicatorImage, backIndicatorTransitionMaskImage);
+		}
+
+		internal static UIImage GetEmptyBackIndicatorImage()
+		{
+			var rect = RectangleF.Empty;
+			SizeF size = rect.Size;
+
+			UIGraphics.BeginImageContext(size);
+			CGContext? context = UIGraphics.GetCurrentContext();
+			context?.SetFillColor(1, 1, 1, 0);
+			context?.FillRect(rect);
+
+			UIImage? empty = UIGraphics.GetImageFromCurrentImageContext();
+			context?.Dispose();
+
+			return empty;
+		}
+
+		internal static ParentViewController? GetParentViewController(this UINavigationBar navigationBar)
+		{
+			var viewControllers = navigationBar.GetNavigationController()?.ViewControllers;
+			if (!viewControllers?.Any() ?? true)
+			{
+				return null;
+			}
+
+			var parentViewController = viewControllers.Last() as ParentViewController;
+			return parentViewController;
+		}
+
+
+		void UpdateBarTextColor()
 		{
 			var barTextColor = NavPage.BarTextColor;
 
@@ -80,7 +273,7 @@ namespace Microsoft.Maui.Controls.Platform
 				? UINavigationBar.Appearance.TintColor
 				: iconColor.ToPlatform();
 		}
-		 */
+
 
 		static void ClearTitleViewContainer(Toolbar toolbar)
 		{
@@ -99,12 +292,7 @@ namespace Microsoft.Maui.Controls.Platform
 
 		static void UpdateTitleImage(NavigationTitleAreaContainer titleViewContainer, ImageSource titleIcon)
 		{
-			if (titleViewContainer == null)
-			{
-				return;
-			}
-
-			if (titleIcon == null || titleIcon.IsEmpty)
+			if (titleIcon.IsEmpty)
 			{
 				titleViewContainer.Icon = null;
 			}

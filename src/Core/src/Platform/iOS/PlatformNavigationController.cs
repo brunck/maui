@@ -7,7 +7,7 @@ namespace Microsoft.Maui.Platform;
 
 internal class PlatformNavigationController : UINavigationController
 {
-	protected WeakReference<NavigationViewHandler> Handler { get; }
+	internal WeakReference<NavigationViewHandler> Handler { get; }
 
 	public PlatformNavigationController(NavigationViewHandler handler)
 	{
@@ -36,17 +36,17 @@ internal class PlatformNavigationController : UINavigationController
 		window.BackButtonClicked();
 	}
 
-	//public override void PushViewController(UIViewController viewController, bool animated)
-	//{
-	//	var containerViewController = new ParentViewController(
-	//		Handler.TryGetTarget(out NavigationViewHandler? handler) ? handler : throw new InvalidOperationException("Could not obtain NavigationViewHandler."));
+	public override void PushViewController(UIViewController viewController, bool animated)
+	{
+		var containerViewController = new ParentViewController(
+			Handler.TryGetTarget(out NavigationViewHandler? handler) ? handler : throw new InvalidOperationException("Could not obtain NavigationViewHandler."));
 
-	//	containerViewController.View!.AddSubview(viewController.View!);
-	//	containerViewController.AddChildViewController(viewController);
-	//	viewController.DidMoveToParentViewController(containerViewController);
+		containerViewController.View!.AddSubview(viewController.View!);
+		containerViewController.AddChildViewController(viewController);
+		viewController.DidMoveToParentViewController(containerViewController);
 
-	//	base.PushViewController(containerViewController, animated);
-	//}
+		base.PushViewController(containerViewController, animated);
+	}
 
 	//public override void ViewWillLayoutSubviews()
 	//{
@@ -83,7 +83,7 @@ internal class PlatformNavigationController : UINavigationController
 	}
 }
 
-class ParentViewController : UIViewController
+internal class ParentViewController : UIViewController
 {
 	WeakReference<NavigationViewHandler> Handler { get; }
 
@@ -117,18 +117,22 @@ internal class NavigationDelegate : UINavigationControllerDelegate
 		Handler = new WeakReference<NavigationViewHandler>(handler);
 	}
 
-	public override void WillShowViewController(UINavigationController navigationController, [Transient] UIViewController viewController, bool animated)
-	{
-		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
-		{
-			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
-		}
+	//public override void WillShowViewController(UINavigationController navigationController, [Transient] UIViewController viewController, bool animated)
+	//{
+	//	if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+	//	{
+	//		throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+	//	}
 
-		var toolbar = (handler.NavigationManager?.ToolbarElement?.Toolbar) ?? throw new InvalidOperationException("Could not obtain Toolbar.");
+	//	var toolbar = (handler.NavigationManager?.ToolbarElement?.Toolbar) ?? throw new InvalidOperationException("Could not obtain Toolbar.");
 
-		navigationController.UpdateNavigationBarVisibility(toolbar.IsVisible, animated);
+	//	//if (!NavigationController.TryGetTarget(out var navController))
+	//	//{
+	//	//	throw new InvalidOperationException("Could not obtain NavigationController.");
+	//	//}
+	//	viewController.NavigationController?.UpdateNavigationBarVisibility(toolbar.IsVisible, animated);
 
-		var isTranslucent = navigationController.NavigationBar.Translucent;
-		viewController.EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
-	}
+	//	var isTranslucent = navigationController.NavigationBar.Translucent;
+	//	viewController.EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
+	//}
 }
