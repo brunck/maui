@@ -41,24 +41,34 @@ namespace Microsoft.Maui.Controls
 			navigationItem.HidesBackButton = !toolbar.BackButtonVisible;
 		}
 
+		public static void MapBackButtonTitle(IToolbarHandler handler, Toolbar toolbar)
+		{
+			handler.PlatformView.UpdateTitleArea(toolbar);
+		}
+
 		public static void MapTitleIcon(IToolbarHandler handler, Toolbar toolbar)
 		{
-			toolbar.UpdateTitleArea();
+			handler.PlatformView.UpdateTitleArea(toolbar);
 		}
 
 		public static void MapTitleView(IToolbarHandler handler, Toolbar toolbar)
 		{
-			toolbar.UpdateTitleArea();
+			handler.PlatformView.UpdateTitleArea(toolbar);
 		}
 
 		public static void MapIconColor(IToolbarHandler handler, Toolbar toolbar)
 		{
-
+			handler.PlatformView.UpdateBarTextColor(toolbar);
 		}
 
 		public static void MapBarBackground(IToolbarHandler handler, Toolbar toolbar)
 		{
 			handler.PlatformView.UpdateBarBackground(toolbar);
+		}
+
+		public static void MapBarTextColor(IToolbarHandler handler, Toolbar toolbar)
+		{
+			handler.PlatformView.UpdateBarTextColor(toolbar);
 		}
 	}
 

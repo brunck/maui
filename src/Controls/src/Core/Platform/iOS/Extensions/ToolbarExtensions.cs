@@ -2,16 +2,20 @@
 using System.Drawing;
 using System.Linq;
 using CoreGraphics;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using UIKit;
 
 namespace Microsoft.Maui.Controls.Platform
 {
 	internal static class ToolbarExtensions
 	{
-		internal static void UpdateTitleArea(this Toolbar toolbar)
+		internal static void UpdateTitleArea(this UINavigationBar navigationBar, Toolbar toolbar)
 		{
 			ImageSource titleIcon = toolbar.TitleIcon;
 			var titleView = toolbar.TitleView;
+
+			// UpdateLeftBarButtonItem() ?
+			navigationBar.UpdateBackButtonTitle(toolbar);
 
 			ClearTitleViewContainer(toolbar);
 			if (titleIcon == null || titleIcon.IsEmpty && titleView == null)
@@ -92,6 +96,30 @@ namespace Microsoft.Maui.Controls.Platform
 					navigationBar.SetBackgroundImage(backgroundImage, UIBarMetrics.Default);
 				}
 			}
+		}
+
+		internal static void UpdateBackButtonTitle(this UINavigationBar navigationBar, Toolbar toolbar)
+		{
+			var viewController = navigationBar.GetParentViewController();
+			if (viewController == null)
+			{
+				return;
+			}
+
+			if (!string.IsNullOrWhiteSpace(toolbar.Title))
+			{
+				viewController.NavigationItem.Title = toolbar.Title;
+				return;
+			}
+
+			var backButtonText = toolbar.BackButtonTitle;
+			if (string.IsNullOrWhiteSpace(backButtonText))
+			{
+				viewController.NavigationItem.BackBarButtonItem = null;
+				return;
+			}
+
+			viewController.NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = backButtonText, Style = UIBarButtonItemStyle.Plain };
 		}
 
 		internal static void SetupDefaultNavigationBarAppearance(this UINavigationBar navBar)
@@ -219,61 +247,97 @@ namespace Microsoft.Maui.Controls.Platform
 			return parentViewController;
 		}
 
+		internal static void UpdateBarTextColor(this UINavigationBar navigationBar, Toolbar toolbar)
+		{
+			var barTextColor = toolbar.BarTextColor;
 
-		//void UpdateBarTextColor()
-		//{
-		//	var barTextColor = NavPage.BarTextColor;
+			// Determine new title text attributes via global static data
+			var globalTitleTextAttributes = UINavigationBar.Appearance.TitleTextAttributes;
+			var titleTextAttributes = new UIStringAttributes
+			{
+				ForegroundColor = barTextColor == null ? globalTitleTextAttributes.ForegroundColor : barTextColor.ToPlatform(),
+				Font = globalTitleTextAttributes.Font
+			};
 
-		//	// Determine new title text attributes via global static data
-		//	var globalTitleTextAttributes = UINavigationBar.Appearance.TitleTextAttributes;
-		//	var titleTextAttributes = new UIStringAttributes
-		//	{
-		//		ForegroundColor = barTextColor == null ? globalTitleTextAttributes?.ForegroundColor : barTextColor.ToPlatform(),
-		//		Font = globalTitleTextAttributes?.Font
-		//	};
+			// Determine new large title text attributes via global static data
+			var globalLargeTitleTextAttributes = UINavigationBar.Appearance.LargeTitleTextAttributes;
+			var largeTitleTextAttributes = new UIStringAttributes
+			{
+				ForegroundColor = barTextColor == null ? globalLargeTitleTextAttributes?.ForegroundColor : barTextColor.ToPlatform(),
+				Font = globalLargeTitleTextAttributes?.Font
+			};
+			
+			if (OperatingSystem.IsIOSVersionAtLeast(13))
+			{
+				if (navigationBar.CompactAppearance != null)
+				{
+					navigationBar.CompactAppearance.TitleTextAttributes = titleTextAttributes;
+					navigationBar.CompactAppearance.LargeTitleTextAttributes = largeTitleTextAttributes;
+				}
+				
+				navigationBar.StandardAppearance.TitleTextAttributes = titleTextAttributes;
+				navigationBar.StandardAppearance.LargeTitleTextAttributes = largeTitleTextAttributes;
+				
+				if (navigationBar.ScrollEdgeAppearance != null)
+				{
+					navigationBar.ScrollEdgeAppearance.TitleTextAttributes = titleTextAttributes;
+					navigationBar.ScrollEdgeAppearance.LargeTitleTextAttributes = largeTitleTextAttributes;
+				}
+			}
+			else
+			{
+				navigationBar.TitleTextAttributes = titleTextAttributes;
+				navigationBar.LargeTitleTextAttributes = largeTitleTextAttributes;
+			}
 
-		//	// Determine new large title text attributes via global static data
-		//	var largeTitleTextAttributes = titleTextAttributes;
-		//	if (OperatingSystem.IsIOSVersionAtLeast(11))
-		//	{
-		//		var globalLargeTitleTextAttributes = UINavigationBar.Appearance.LargeTitleTextAttributes;
+			// set Tint color (i.e. Back Button arrow and Text)
+			Graphics.Color? iconColor = null;
+			if (toolbar is NavigationPageToolbar navPageToolbar)
+			{
+				if (navPageToolbar.CurrentNavigationPage != null)
+				{
+					iconColor = navPageToolbar.IconColor;
+				}
 
-		//		largeTitleTextAttributes = new UIStringAttributes
-		//		{
-		//			ForegroundColor = barTextColor == null ? globalLargeTitleTextAttributes?.ForegroundColor : barTextColor.ToPlatform(),
-		//			Font = globalLargeTitleTextAttributes?.Font
-		//		};
-		//	}
+				iconColor ??= barTextColor;
 
-		//	if (OperatingSystem.IsIOSVersionAtLeast(13))
-		//	{
-		//		NavigationBar.CompactAppearance.TitleTextAttributes = titleTextAttributes;
-		//		NavigationBar.CompactAppearance.LargeTitleTextAttributes = largeTitleTextAttributes;
+				navigationBar.TintColor = iconColor == null || navPageToolbar.CurrentNavigationPage.OnThisPlatform().GetStatusBarTextColorMode() ==
+					StatusBarTextColorMode.DoNotAdjust
+						? UINavigationBar.Appearance.TintColor
+						: iconColor.ToPlatform();
+			}
 
-		//		NavigationBar.StandardAppearance.TitleTextAttributes = titleTextAttributes;
-		//		NavigationBar.StandardAppearance.LargeTitleTextAttributes = largeTitleTextAttributes;
+			if (iconColor == null)
+			{
+				navigationBar.TintColor = UINavigationBar.Appearance.TintColor;
+			}
+		}
 
-		//		NavigationBar.ScrollEdgeAppearance.TitleTextAttributes = titleTextAttributes;
-		//		NavigationBar.ScrollEdgeAppearance.LargeTitleTextAttributes = largeTitleTextAttributes;
-		//	}
-		//	else
-		//	{
-		//		NavigationBar.TitleTextAttributes = titleTextAttributes;
+//		static void SetStatusBarStyle()
+//		{
+//			var barTextColor = NavPage.BarTextColor;
+//			var statusBarColorMode = NavPage.OnThisPlatform().GetStatusBarTextColorMode();
 
-		//		if (OperatingSystem.IsIOSVersionAtLeast(11))
-		//			NavigationBar.LargeTitleTextAttributes = largeTitleTextAttributes;
-		//	}
-
-		//	// set Tint color (i. e. Back Button arrow and Text)
-		//	var iconColor = Current != null ? NavigationPage.GetIconColor(Current) : null;
-		//	if (iconColor == null)
-		//		iconColor = barTextColor;
-
-		//	NavigationBar.TintColor = iconColor == null || NavPage.OnThisPlatform().GetStatusBarTextColorMode() == StatusBarTextColorMode.DoNotAdjust
-		//		? UINavigationBar.Appearance.TintColor
-		//		: iconColor.ToPlatform();
-		//}
-
+//#pragma warning disable CA1416, CA1422 // TODO:   'UIApplication.StatusBarStyle' is unsupported on: 'ios' 9.0 and later
+//			if (statusBarColorMode == StatusBarTextColorMode.DoNotAdjust || barTextColor?.GetLuminosity() <= 0.5)
+//			{
+//				// Use dark text color for status bar
+//				if (OperatingSystem.IsIOSVersionAtLeast(13) || OperatingSystem.IsMacCatalystVersionAtLeast(13))
+//				{
+//					UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.DarkContent;
+//				}
+//				else
+//				{
+//					UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.Default;
+//				}
+//			}
+//			else
+//			{
+//				// Use light text color for status bar
+//				UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
+//			}
+//#pragma warning restore CA1416, CA1422
+//		}
 
 		static void ClearTitleViewContainer(Toolbar toolbar)
 		{
@@ -298,7 +362,11 @@ namespace Microsoft.Maui.Controls.Platform
 			}
 			else
 			{
-				var context = titleIcon.FindMauiContext() ?? throw new InvalidOperationException("MauiContext is null.");
+				var context = titleIcon.FindMauiContext();
+				if (context == null)
+				{
+					return;
+				}
 
 				titleIcon.LoadImage(context, result =>
 				{
@@ -313,6 +381,11 @@ namespace Microsoft.Maui.Controls.Platform
 					}
 				});
 			}
+		}
+
+		static void MapToolbarItems(IToolbarHandler arg1, Toolbar arg2)
+		{
+			
 		}
 	}
 }
