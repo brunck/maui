@@ -70,6 +70,11 @@ namespace Microsoft.Maui.Controls
 		{
 			handler.PlatformView.UpdateBarTextColor(toolbar);
 		}
+
+		public static void MapToolbarItems(IToolbarHandler handler, Toolbar toolbar)
+		{
+			handler.PlatformView.UpdateToolbarItems(toolbar);
+		}
 	}
 
 	internal class NavigationTitleAreaContainer : UIView

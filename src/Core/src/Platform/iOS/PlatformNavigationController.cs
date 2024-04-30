@@ -2,6 +2,7 @@
 using Foundation;
 using ObjCRuntime;
 using UIKit;
+using RectangleF = CoreGraphics.CGRect;
 
 namespace Microsoft.Maui.Platform;
 
@@ -48,30 +49,30 @@ internal class PlatformNavigationController : UINavigationController
 		base.PushViewController(containerViewController, animated);
 	}
 
-	//public override void ViewWillLayoutSubviews()
-	//{
-	//	base.ViewWillLayoutSubviews();
-	//	if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
-	//	{
-	//		throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
-	//	}
+	public override void ViewWillLayoutSubviews()
+	{
+		base.ViewWillLayoutSubviews();
+		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+		{
+			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+		}
 
-	//	/*
-	//	 UpdateToolBarVisible();
+		/*
+		 UpdateToolBarVisible();
 
-	//		var navBarFrameBottom = Math.Min(NavigationBar.Frame.Bottom, 140);
-	//		var toolbar = _secondaryToolbar;
+			var navBarFrameBottom = Math.Min(NavigationBar.Frame.Bottom, 140);
+			var toolbar = _secondaryToolbar;
 
-	//		//save the state of the Current page we are calculating, this will fire before Current is updated
-	//		_hasNavigationBar = NavigationPage.GetHasNavigationBar(Current);
-	//	 */
+			//save the state of the Current page we are calculating, this will fire before Current is updated
+			_hasNavigationBar = NavigationPage.GetHasNavigationBar(Current);
+		 */
 
-	//	var toolbar = handler.NavigationManager?.ToolbarElement?.Toolbar ?? throw new InvalidOperationException("Could not obtain Toolbar.");
+		var toolbar = handler.NavigationManager?.ToolbarElement?.Toolbar ?? throw new InvalidOperationException("Could not obtain Toolbar.");
 
-	//	// Use 0 if the NavBar is hidden or will be hidden
-	//	var toolbarY = NavigationBarHidden || NavigationBar.Translucent || !_hasNavigationBar ? 0 : navBarFrameBottom;
-	//	toolbar.Frame = new RectangleF(0, toolbarY, View.Frame.Width, toolbar.Frame.Height);
-	//}
+		// Use 0 if the NavBar is hidden or will be hidden
+		var toolbarY = NavigationBarHidden || NavigationBar.Translucent || !_hasNavigationBar ? 0 : navBarFrameBottom;
+		toolbar.Frame = new RectangleF(0, toolbarY, View!.Frame.Width, toolbar.Frame.Height);
+	}
 
 	protected override void Dispose(bool disposing)
 	{
@@ -91,6 +92,8 @@ internal class ParentViewController : UIViewController
 	{
 		Handler = new WeakReference<NavigationViewHandler>(handler);
 	}
+
+	///////////////////// TODO: See UpdateFrames() in NavigationRenderer
 
 	public override void ViewWillAppear(bool animated)
 	{

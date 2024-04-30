@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using CoreGraphics;
+using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
+using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using UIKit;
 
@@ -29,7 +32,7 @@ namespace Microsoft.Maui.Controls.Platform
 			}
 			NavigationTitleAreaContainer titleViewContainer = new NavigationTitleAreaContainer((View)titleView, toolbar.NavigationController.NavigationBar);
 
-			UpdateTitleImage(titleViewContainer, titleIcon);
+			UpdateTitleImage(toolbar, titleViewContainer, titleIcon);
 			toolbar.NavigationController.NavigationItem.TitleView = titleViewContainer;
 		}
 
@@ -313,6 +316,60 @@ namespace Microsoft.Maui.Controls.Platform
 			}
 		}
 
+		internal static void UpdateToolbarItems(this UINavigationBar navigationBar, Toolbar toolbar)
+		{
+			if (toolbar.NavigationController == null)
+			{
+				return;
+			}
+
+			var navigationItem = toolbar.NavigationController.TopViewController.NavigationItem;
+
+			if (navigationItem.RightBarButtonItems != null)
+			{
+				for (var i = 0; i < navigationItem.RightBarButtonItems.Length; i++)
+				{
+					navigationItem.RightBarButtonItems[i].Dispose();
+				}
+			}
+
+			var toolbarItems = toolbar.NavigationController.TopViewController.ToolbarItems;
+			if (toolbarItems != null)
+			{
+				for (var i = 0; i < toolbarItems.Length; i++)
+				{
+					toolbarItems[i].Dispose();
+				}
+			}
+
+			List<UIBarButtonItem>? primaries = null;
+			List<UIBarButtonItem>? secondaries = null;
+			foreach (var item in toolbar.ToolbarItems)
+			{
+				if (item.Order == ToolbarItemOrder.Secondary)
+				{
+					(secondaries ??= new List<UIBarButtonItem>()).Add(item.ToUIBarButtonItem(true));
+				}
+				else
+				{
+					(primaries ??= new List<UIBarButtonItem>()).Add(item.ToUIBarButtonItem());
+				}
+			}
+
+			if (primaries != null)
+			{
+				primaries.Reverse();
+			}
+
+			toolbar.NavigationController!.TopViewController.NavigationItem.SetRightBarButtonItems(primaries == null ? [] : primaries.ToArray(),
+				false);
+			toolbar.NavigationController
+				.TopViewController.ToolbarItems = secondaries == null ? [] : secondaries.ToArray();
+
+			toolbar.NavigationController.UpdateNavigationBarVisibility(toolbar.IsVisible, true); // TODO: check that we need this call at all 
+		}
+
+		// TODO: StatusBarTextColorModeProperty is on NavigationPage, look at NavigationRenderer and how it uses this
 //		static void SetStatusBarStyle()
 //		{
 //			var barTextColor = NavPage.BarTextColor;
@@ -354,7 +411,7 @@ namespace Microsoft.Maui.Controls.Platform
 			}
 		}
 
-		static void UpdateTitleImage(NavigationTitleAreaContainer titleViewContainer, ImageSource titleIcon)
+		static void UpdateTitleImage(Toolbar toolbar, NavigationTitleAreaContainer titleViewContainer, ImageSource titleIcon)
 		{
 			if (titleIcon.IsEmpty)
 			{
@@ -381,11 +438,6 @@ namespace Microsoft.Maui.Controls.Platform
 					}
 				});
 			}
-		}
-
-		static void MapToolbarItems(IToolbarHandler arg1, Toolbar arg2)
-		{
-			
 		}
 	}
 }
