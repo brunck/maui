@@ -256,11 +256,10 @@ namespace Microsoft.Maui.Controls.Platform
 
 			// Determine new title text attributes via global static data
 			var globalTitleTextAttributes = UINavigationBar.Appearance.TitleTextAttributes;
-			var titleTextAttributes = new UIStringAttributes
-			{
-				ForegroundColor = barTextColor == null ? globalTitleTextAttributes.ForegroundColor : barTextColor.ToPlatform(),
-				Font = globalTitleTextAttributes.Font
-			};
+
+			// using the object initializer gave us a NullReferenceException, but this way works, oddly
+			var titleTextAttributes = new UIStringAttributes();
+			titleTextAttributes.ForegroundColor = barTextColor == null ? globalTitleTextAttributes?.ForegroundColor : barTextColor.ToPlatform();
 
 			// Determine new large title text attributes via global static data
 			var globalLargeTitleTextAttributes = UINavigationBar.Appearance.LargeTitleTextAttributes;
