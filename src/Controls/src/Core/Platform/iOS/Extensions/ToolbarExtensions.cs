@@ -103,7 +103,7 @@ namespace Microsoft.Maui.Controls.Platform
 
 		internal static void UpdateBackButtonTitle(this UINavigationBar navigationBar, Toolbar toolbar)
 		{
-			var viewController = navigationBar.GetParentViewController();
+			var viewController = toolbar.NavigationController?.TopViewController;
 			if (viewController == null)
 			{
 				return;
@@ -366,6 +366,22 @@ namespace Microsoft.Maui.Controls.Platform
 				.TopViewController.ToolbarItems = secondaries == null ? [] : secondaries.ToArray();
 
 			toolbar.NavigationController.UpdateNavigationBarVisibility(toolbar.IsVisible, true); // TODO: check that we need this call at all 
+		}
+
+		internal static void UpdateBackButtonVisibility(this UINavigationBar navigationBar, Toolbar toolbar)
+		{
+			if (toolbar.NavigationController == null)
+			{
+				throw new NullReferenceException("NavigationController is null.");
+			}
+
+			var navigationItem = toolbar.NavigationController.TopViewController.NavigationItem;
+			if (navigationItem.HidesBackButton == !toolbar.BackButtonVisible)
+			{
+				return;
+			}
+
+			navigationItem.HidesBackButton = !toolbar.BackButtonVisible;
 		}
 
 		// TODO: StatusBarTextColorModeProperty is on NavigationPage, look at NavigationRenderer and how it uses this

@@ -27,18 +27,8 @@ namespace Microsoft.Maui.Controls
 
 		public static void MapBackButtonVisible(IToolbarHandler handler, Toolbar toolbar)
 		{
-			if (toolbar.NavigationController == null)
-			{
-				throw new NullReferenceException("NavigationController is null.");
-			}
-
-			var navigationItem = toolbar.NavigationController.TopViewController.NavigationItem;
-			if (navigationItem.HidesBackButton == !toolbar.BackButtonVisible)
-			{
-				return;
-			}
-
-			navigationItem.HidesBackButton = !toolbar.BackButtonVisible;
+			handler.PlatformView.UpdateBackButtonVisibility(toolbar);
+			handler.PlatformView.UpdateTitleArea(toolbar);
 		}
 
 		public static void MapBackButtonTitle(IToolbarHandler handler, Toolbar toolbar)
