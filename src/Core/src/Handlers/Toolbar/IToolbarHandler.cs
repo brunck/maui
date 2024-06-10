@@ -1,5 +1,5 @@
 ﻿#if IOS || MACCATALYST
-using PlatformView = UIKit.UINavigationBar;
+using PlatformView = UIKit.UINavigationController;
 #elif MONOANDROID
 using PlatformView = Google.Android.Material.AppBar.MaterialToolbar;
 #elif WINDOWS

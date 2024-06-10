@@ -1,5 +1,5 @@
 ﻿#if IOS || MACCATALYST
-using PlatformView = UIKit.UINavigationBar;
+using PlatformView = UIKit.UINavigationController;
 #elif MONOANDROID
 using PlatformView = Google.Android.Material.AppBar.MaterialToolbar;
 #elif WINDOWS
@@ -20,6 +20,7 @@ namespace Microsoft.Maui.Handlers
 				   [nameof(IToolbar.Title)] = MapTitle,
 #if IOS || MACCATALYST
 					[nameof(IToolbar.IsVisible)] = MapIsVisible,
+					[nameof(IToolbar.BackButtonVisible)] = MapBackButtonVisible,
 #endif
 			   };
 
