@@ -849,7 +849,17 @@ namespace Microsoft.Maui.Controls
 				return Owner.SendHandlerUpdateAsync(animated,
 					() =>
 					{
-						Owner.PushPage(root);
+						//Owner.PushPage(root);
+						
+						Owner.InternalChildren.Add(root);
+
+						if (Owner.InternalChildren.Count == 1)
+						{
+							Owner.RootPage = root;
+						}
+
+						// Owner.CurrentPage = root;
+						
 					},
 					() =>
 					{
@@ -859,6 +869,7 @@ namespace Microsoft.Maui.Controls
 					},
 					() =>
 					{
+						Owner.CurrentPage = root;
 						Owner.SendNavigated(previousPage);
 						Owner?.Pushed?.Invoke(Owner, new NavigationEventArgs(root));
 					});

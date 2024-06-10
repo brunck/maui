@@ -80,7 +80,7 @@ public class StackNavigationManager
 			// otherwise, this changes a page/pages not on the top of the stack, so just sync the stacks
 		}
 
-		// The incoming and current stacks are the same length, so just sync the stacks
+		// The incoming and current stacks are the same length, multiple pages are being added/removed, or non-visible pages are being manipulated, so just sync the stacks
 		NavigationStack = new List<IView>(request.NavigationStack);
 		SyncNativeStackWithNewStack(request);
 		//NavigationView?.NavigationFinished(NavigationStack);

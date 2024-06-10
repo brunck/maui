@@ -49,10 +49,10 @@ internal class PlatformNavigationController : UINavigationController
 		var containerViewController = new ParentViewController(
 			Handler.TryGetTarget(out NavigationViewHandler? handler) ? handler : throw new InvalidOperationException("Could not obtain NavigationViewHandler."));
 
-		if (TopViewController?.Title != null)
-		{
-			containerViewController.UpdateBackButtonTitle(TopViewController.Title);
-		}
+		// if (TopViewController?.Title != null)
+		// {
+		// 	containerViewController.UpdateBackButtonTitle(TopViewController.Title);
+		// }
 
 		containerViewController.View!.AddSubview(viewController.View!);
 		containerViewController.AddChildViewController(viewController);
