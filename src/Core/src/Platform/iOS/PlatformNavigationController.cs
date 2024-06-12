@@ -46,8 +46,17 @@ internal class PlatformNavigationController : UINavigationController
 
 	public override void PushViewController(UIViewController viewController, bool animated)
 	{
-		var containerViewController = new ParentViewController(
-			Handler.TryGetTarget(out NavigationViewHandler? handler) ? handler : throw new InvalidOperationException("Could not obtain NavigationViewHandler."));
+		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+		{
+			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+		}
+
+		var containerViewController = new ParentViewController(handler);
+
+		if (handler.NavigationManager?.ToolbarElement?.Toolbar?.ToHandler(handler.MauiContext!) is ToolbarHandler toolbarHandler)
+		{
+			containerViewController.ToolbarHandler = new WeakReference<ToolbarHandler>(toolbarHandler);
+		}
 
 		// if (TopViewController?.Title != null)
 		// {
@@ -74,6 +83,7 @@ internal class PlatformNavigationController : UINavigationController
 			secondaryToolbar.Hidden = true;
 		}
 		
+		UpdateToolBarVisible();
 	}
 
 	public override void ViewWillLayoutSubviews()
@@ -167,12 +177,21 @@ internal class ParentViewController : UIViewController
 {
 	WeakReference<NavigationViewHandler> Handler { get; }
 
+	public WeakReference<ToolbarHandler>? ToolbarHandler { get; set; }
+
 	public ParentViewController(NavigationViewHandler handler)
 	{
 		Handler = new WeakReference<NavigationViewHandler>(handler);
 	}
 
 	///////////////////// TODO: See UpdateFrames() in NavigationRenderer
+
+	// public override void ViewDidAppear(bool animated)
+	// {
+	// 	base.ViewDidAppear(animated);
+
+		
+	// }
 
 	public override void ViewWillAppear(bool animated)
 	{
@@ -187,10 +206,18 @@ internal class ParentViewController : UIViewController
 		var isTranslucent = NavigationController?.NavigationBar.Translucent ?? false;
 		EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
 
-		// var toolbarElement = handler.NavigationManager?.ToolbarElement;
-		// var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
-		// toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
+		var toolbarElement = handler.NavigationManager?.ToolbarElement;
+		var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
+		//toolbarHandler?._mapper.UpdateProperty(toolbarHandler, toolbarHandler.VirtualView, nameof(IToolbar.Title));
+		toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
 		//ToolbarHandler.Mapper.UpdateProperties(toolbarHandler!, toolbarHandler!.VirtualView);
+
+		// // Update the toolbar properties after the native navigation, since it doesn't happen automatically in the NavigationPage
+		// // That will clean up the toolbar and the currently visible view controller
+		// if (ToolbarHandler?.TryGetTarget(out ToolbarHandler? handler) ?? false)
+		// {
+		// 	handler._mapper.UpdateProperties(handler, handler.VirtualView);
+		// }
 
 		base.ViewWillAppear(animated);
 	}

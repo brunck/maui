@@ -858,7 +858,7 @@ namespace Microsoft.Maui.Controls
 							Owner.RootPage = root;
 						}
 
-						// Owner.CurrentPage = root;
+						//Owner.CurrentPage = root;
 						
 					},
 					() =>
