@@ -858,7 +858,7 @@ namespace Microsoft.Maui.Controls
 							Owner.RootPage = root;
 						}
 
-						//Owner.CurrentPage = root;
+						Owner.CurrentPage = root;
 						
 					},
 					() =>
@@ -869,7 +869,8 @@ namespace Microsoft.Maui.Controls
 					},
 					() =>
 					{
-						Owner.CurrentPage = root;
+						// TODO: If we don't do this here, we need to somehow trigger the event that eventually sets the NavigationPageToolbar properties so that the current data will be reflected on the top view controller
+						//Owner.CurrentPage = root; 
 						Owner.SendNavigated(previousPage);
 						Owner?.Pushed?.Invoke(Owner, new NavigationEventArgs(root));
 					});

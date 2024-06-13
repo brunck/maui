@@ -11,17 +11,18 @@ public class StackNavigationManager
 	IReadOnlyList<IView> NavigationStack { get; set; } = [];
 	IStackNavigationView? NavigationView { get; set; }
 	UINavigationController? NavigationController { get; set; }
+	NavigationViewHandler? NavigationViewHandler { get; set; }
 
 	public StackNavigationManager(IMauiContext mauiContext)
 	{
 		MauiContext = mauiContext;
 	}
 
-	public virtual void Connect(IStackNavigationView virtualView, UINavigationController navigationController)
+	public virtual void Connect(IStackNavigationView virtualView, UINavigationController navigationController, NavigationViewHandler navigationViewHandler)
 	{
 		NavigationView = virtualView;
 		NavigationController = navigationController;
-		// TODO: add NavigationViewHandler as a member here
+		NavigationViewHandler = navigationViewHandler;
 	}
 
 	public virtual void Disconnect(IStackNavigationView virtualView, UINavigationController navigationController)
@@ -29,6 +30,7 @@ public class StackNavigationManager
 		// TODO: anything else to clean up here
 		NavigationView = null;
 		NavigationController = null;
+		NavigationViewHandler = null;
 	}
 
 	public virtual void RequestNavigation(NavigationRequest request)
@@ -118,14 +120,10 @@ public class StackNavigationManager
 				throw new InvalidOperationException("ViewController cannot be null.");
 			}
 
-			//var wrapper = new ParentViewController(page.Handler as NavigationViewHandler 
-			//	?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}"));
-
-			var containerViewController = new ParentViewController(); // TODO: pass NavigationViewHandler here
+			var containerViewController = new ParentViewController(NavigationViewHandler 
+				?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}"));
 			containerViewController.View!.AddSubview(viewController.View!);
 			containerViewController.AddChildViewController(viewController);
-
-			
 
 			newStack.Add(viewController);
 		}

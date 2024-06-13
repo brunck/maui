@@ -13,13 +13,13 @@ internal class PlatformNavigationController : UINavigationController
 {
 	bool _disposed;
 
-	internal WeakReference<NavigationViewHandler> Handler { get; }
+	internal WeakReference<NavigationViewHandler> NavigationHandler { get; }
 	
 	WeakReference<UIToolbar> SecondaryToolbar { get; set; } = new WeakReference<UIToolbar>(new SecondaryToolbar());
 
 	public PlatformNavigationController(NavigationViewHandler handler)
 	{
-		Handler = new WeakReference<NavigationViewHandler>(handler);
+		NavigationHandler = new WeakReference<NavigationViewHandler>(handler);
 		Delegate = new NavigationDelegate(this, handler);
 	}
 
@@ -36,7 +36,7 @@ internal class PlatformNavigationController : UINavigationController
 
 	protected virtual void BackButtonClicked()
 	{
-		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+		if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
 		{
 			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
 		}
@@ -44,31 +44,26 @@ internal class PlatformNavigationController : UINavigationController
 		window.BackButtonClicked();
 	}
 
-	public override void PushViewController(UIViewController viewController, bool animated)
-	{
-		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
-		{
-			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
-		}
+	// public override void PushViewController(UIViewController viewController, bool animated)
+	// {
+	// 	if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
+	// 	{
+	// 		throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+	// 	}
 
-		var containerViewController = new ParentViewController(handler);
+	// 	var containerViewController = new ParentViewController(handler);
 
-		if (handler.NavigationManager?.ToolbarElement?.Toolbar?.ToHandler(handler.MauiContext!) is ToolbarHandler toolbarHandler)
-		{
-			containerViewController.ToolbarHandler = new WeakReference<ToolbarHandler>(toolbarHandler);
-		}
+	// 	// if (TopViewController?.Title != null)
+	// 	// {
+	// 	// 	containerViewController.UpdateBackButtonTitle(TopViewController.Title);
+	// 	// }
 
-		// if (TopViewController?.Title != null)
-		// {
-		// 	containerViewController.UpdateBackButtonTitle(TopViewController.Title);
-		// }
+	// 	containerViewController.View!.AddSubview(viewController.View!);
+	// 	containerViewController.AddChildViewController(viewController);
+	// 	viewController.DidMoveToParentViewController(containerViewController);
 
-		containerViewController.View!.AddSubview(viewController.View!);
-		containerViewController.AddChildViewController(viewController);
-		viewController.DidMoveToParentViewController(containerViewController);
-
-		base.PushViewController(containerViewController, animated);
-	}
+	// 	base.PushViewController(containerViewController, animated);
+	// }
 
 	public override void ViewDidLoad()
 	{
@@ -89,7 +84,7 @@ internal class PlatformNavigationController : UINavigationController
 	public override void ViewWillLayoutSubviews()
 	{
 		base.ViewWillLayoutSubviews();
-		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+		if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
 		{
 			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
 		}
@@ -176,8 +171,6 @@ internal class PlatformNavigationController : UINavigationController
 internal class ParentViewController : UIViewController
 {
 	WeakReference<NavigationViewHandler> Handler { get; }
-
-	public WeakReference<ToolbarHandler>? ToolbarHandler { get; set; }
 
 	public ParentViewController(NavigationViewHandler handler)
 	{

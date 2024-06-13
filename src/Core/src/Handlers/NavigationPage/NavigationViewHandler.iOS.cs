@@ -43,7 +43,7 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 			throw new NullReferenceException("PlatformNavigationController is null.");
 		}
 
-		StackNavigationManager?.Connect(VirtualView, _platformNavigationController); // TODO: pass "this" here
+		StackNavigationManager?.Connect(VirtualView, _platformNavigationController, this);
 		base.ConnectHandler(platformView);
 	}
 
