@@ -199,11 +199,11 @@ internal class ParentViewController : UIViewController
 		var isTranslucent = NavigationController?.NavigationBar.Translucent ?? false;
 		EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
 
-		var toolbarElement = handler.NavigationManager?.ToolbarElement;
-		var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
-		//toolbarHandler?._mapper.UpdateProperty(toolbarHandler, toolbarHandler.VirtualView, nameof(IToolbar.Title));
-		toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
-		//ToolbarHandler.Mapper.UpdateProperties(toolbarHandler!, toolbarHandler!.VirtualView);
+		// var toolbarElement = handler.NavigationManager?.ToolbarElement;
+		// var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
+		// //toolbarHandler?._mapper.UpdateProperty(toolbarHandler, toolbarHandler.VirtualView, nameof(IToolbar.Title));
+		// toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
+		// //ToolbarHandler.Mapper.UpdateProperties(toolbarHandler!, toolbarHandler!.VirtualView);
 
 		// // Update the toolbar properties after the native navigation, since it doesn't happen automatically in the NavigationPage
 		// // That will clean up the toolbar and the currently visible view controller
