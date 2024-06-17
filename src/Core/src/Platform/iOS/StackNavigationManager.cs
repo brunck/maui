@@ -60,30 +60,30 @@ public class StackNavigationManager
 		// TODO: Reconstruct the entire native nav stack from the request's nav stack because the title and back button item of the current top are messed up by this point
 		// TODO: Then push or pop the last one? Maybe just SetViewControllers for every case. Probably do the latter.
 
-		// if (isInitialNavigation || currentNavStack.Count < incomingNavStack.Count && incomingNavStack.Count - currentNavStack.Count == 1)
-		// {
-		// 	NavigationStack = new List<IView>(request.NavigationStack);
-		// 	NavigationController!.PushViewController(incomingNavStack[incomingNavStack.Count - 1].ToUIViewController(MauiContext), request.Animated);
-		// 	//NavigationView?.NavigationFinished(NavigationStack);
-		// 	return;
-		// }
+		if (isInitialNavigation || currentNavStack.Count < incomingNavStack.Count && incomingNavStack.Count - currentNavStack.Count == 1)
+		{
+			NavigationStack = new List<IView>(request.NavigationStack);
+			NavigationController!.PushViewController(incomingNavStack[incomingNavStack.Count - 1].ToUIViewController(MauiContext), request.Animated);
+			//NavigationView?.NavigationFinished(NavigationStack);
+			return;
+		}
 
-		// if (currentNavStack.Count > incomingNavStack.Count && currentNavStack.Count - incomingNavStack.Count == 1)
-		// {
-		// 	var currentTop = currentNavStack[currentNavStack.Count - 1];
-		// 	var incomingTop = incomingNavStack[incomingNavStack.Count - 1];
+		if (currentNavStack.Count > incomingNavStack.Count && currentNavStack.Count - incomingNavStack.Count == 1)
+		{
+			var currentTop = currentNavStack[currentNavStack.Count - 1];
+			var incomingTop = incomingNavStack[incomingNavStack.Count - 1];
 
-		// 	if (currentTop != incomingTop && currentNavStack.Count - incomingNavStack.Count == 1)
-		// 	{
-		// 		var topViewController = NavigationController!.TopViewController; // currentTop.ToUIViewController(MauiContext);
-		// 		NavigationStack = new List<IView>(request.NavigationStack);
-		// 		topViewController.NavigationController?.PopViewController(request.Animated);
-		// 		//NavigationController!.PopViewController(request.Animated);
-		// 		return;
-		// 	}
+			if (currentTop != incomingTop && currentNavStack.Count - incomingNavStack.Count == 1)
+			{
+				var topViewController = NavigationController!.TopViewController; // currentTop.ToUIViewController(MauiContext);
+				NavigationStack = new List<IView>(request.NavigationStack);
+				topViewController.NavigationController?.PopViewController(request.Animated);
+				//NavigationController!.PopViewController(request.Animated);
+				return;
+			}
 
 		// 	// otherwise, this changes a page/pages not on the top of the stack, so just sync the stacks
-		// }
+		}
 
 		// The incoming and current stacks are the same length, multiple pages are being added/removed, or non-visible pages are being manipulated, so just sync the stacks
 		NavigationStack = new List<IView>(request.NavigationStack);

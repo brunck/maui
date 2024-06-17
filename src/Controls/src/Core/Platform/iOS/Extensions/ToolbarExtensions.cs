@@ -115,7 +115,7 @@ namespace Microsoft.Maui.Controls.Platform
 			// }
 
 			var backButtonText = toolbar.BackButtonTitle;
-			if (string.IsNullOrWhiteSpace(backButtonText))
+			if (backButtonText is null)
 			{
 				viewController.NavigationItem.BackBarButtonItem = null;
 				return;

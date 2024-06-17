@@ -44,26 +44,26 @@ internal class PlatformNavigationController : UINavigationController
 		window.BackButtonClicked();
 	}
 
-	// public override void PushViewController(UIViewController viewController, bool animated)
-	// {
-	// 	if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
-	// 	{
-	// 		throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
-	// 	}
+	public override void PushViewController(UIViewController viewController, bool animated)
+	{
+		if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
+		{
+			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+		}
 
-	// 	var containerViewController = new ParentViewController(handler);
+		var containerViewController = new ParentViewController(handler);
 
-	// 	// if (TopViewController?.Title != null)
-	// 	// {
-	// 	// 	containerViewController.UpdateBackButtonTitle(TopViewController.Title);
-	// 	// }
+		// if (TopViewController?.Title != null)
+		// {
+		// 	containerViewController.UpdateBackButtonTitle(TopViewController.Title);
+		// }
 
-	// 	containerViewController.View!.AddSubview(viewController.View!);
-	// 	containerViewController.AddChildViewController(viewController);
-	// 	viewController.DidMoveToParentViewController(containerViewController);
+		containerViewController.View!.AddSubview(viewController.View!);
+		containerViewController.AddChildViewController(viewController);
+		viewController.DidMoveToParentViewController(containerViewController);
 
-	// 	base.PushViewController(containerViewController, animated);
-	// }
+		base.PushViewController(containerViewController, animated);
+	}
 
 	public override void ViewDidLoad()
 	{
@@ -199,14 +199,14 @@ internal class ParentViewController : UIViewController
 		var isTranslucent = NavigationController?.NavigationBar.Translucent ?? false;
 		EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
 
-		// var toolbarElement = handler.NavigationManager?.ToolbarElement;
-		// var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
-		// //toolbarHandler?._mapper.UpdateProperty(toolbarHandler, toolbarHandler.VirtualView, nameof(IToolbar.Title));
-		// toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
-		// //ToolbarHandler.Mapper.UpdateProperties(toolbarHandler!, toolbarHandler!.VirtualView);
+		var toolbarElement = handler.NavigationManager?.ToolbarElement;
+		var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
+		//toolbarHandler?._mapper.UpdateProperty(toolbarHandler, toolbarHandler.VirtualView, nameof(IToolbar.Title));
+		toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
+		//ToolbarHandler.Mapper.UpdateProperties(toolbarHandler!, toolbarHandler!.VirtualView);
 
-		// // Update the toolbar properties after the native navigation, since it doesn't happen automatically in the NavigationPage
-		// // That will clean up the toolbar and the currently visible view controller
+		// Update the toolbar properties after the native navigation, since it doesn't happen automatically in the NavigationPage
+		// That will clean up the toolbar and the currently visible view controller
 		// if (ToolbarHandler?.TryGetTarget(out ToolbarHandler? handler) ?? false)
 		// {
 		// 	handler._mapper.UpdateProperties(handler, handler.VirtualView);
