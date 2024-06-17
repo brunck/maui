@@ -849,17 +849,13 @@ namespace Microsoft.Maui.Controls
 				return Owner.SendHandlerUpdateAsync(animated,
 					() =>
 					{
-						Owner.PushPage(root);
-						
-						// Owner.InternalChildren.Add(root);
-
-						// if (Owner.InternalChildren.Count == 1)
-						// {
-						// 	Owner.RootPage = root;
-						// }
-
-						// //Owner.CurrentPage = root;
-						
+						// This causes a problem on iOS because this will invoke handler property updates when this manipulates the InternalChildren and
+						// when the CurrentPage is changed. This screws up the page title of the view controller already on the top of the stack 
+						// and this can mess up the back button title.
+						// This all happens before the platform/native navigation is done via RequestNavigation,
+						// and the handler properties are not updated after the platform navigation has completed here.
+						// We do invoke the handler property updates in the iOS platform navigation code so as not to break other platforms.
+						Owner.PushPage(root);	
 					},
 					() =>
 					{
@@ -869,8 +865,7 @@ namespace Microsoft.Maui.Controls
 					},
 					() =>
 					{
-						// If we don't do this here, we need to somehow trigger the event that eventually sets the NavigationPageToolbar properties so that the current data will be reflected on the top view controller
-						//Owner.CurrentPage = root; 
+						// We could move the setting of the CurrentPage property here and that would be ideal for iOS navigation handling but it will break Android at the very least.
 						Owner.SendNavigated(previousPage);
 						Owner?.Pushed?.Invoke(Owner, new NavigationEventArgs(root));
 					});

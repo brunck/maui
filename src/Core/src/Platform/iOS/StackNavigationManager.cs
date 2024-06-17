@@ -49,17 +49,6 @@ public class StackNavigationManager
 		var incomingNavStack = request.NavigationStack;
 		var isInitialNavigation = currentNavStack.Count == 0 && incomingNavStack.Count == 1;
 
-		//if (isInitialNavigation)
-		//{
-		//	SyncNativeStackWithNewStack(request);
-		//	NavigationStack = new List<IView>(request.NavigationStack);
-		//	NavigationView?.NavigationFinished(NavigationStack);
-		//	return;
-		//}
-
-		// TODO: Reconstruct the entire native nav stack from the request's nav stack because the title and back button item of the current top are messed up by this point
-		// TODO: Then push or pop the last one? Maybe just SetViewControllers for every case. Probably do the latter.
-
 		// if (isInitialNavigation || currentNavStack.Count < incomingNavStack.Count && incomingNavStack.Count - currentNavStack.Count == 1)
 		// {
 		// 	NavigationStack = new List<IView>(request.NavigationStack);
@@ -81,14 +70,11 @@ public class StackNavigationManager
 		// 		//NavigationController!.PopViewController(request.Animated);
 		// 		return;
 		// 	}
-
-		// // 	// otherwise, this changes a page/pages not on the top of the stack, so just sync the stacks
 		// }
 
 		// The incoming and current stacks are the same length, multiple pages are being added/removed, or non-visible pages are being manipulated, so just sync the stacks
 		NavigationStack = new List<IView>(request.NavigationStack);
 		SyncNativeStackWithNewStack(request);
-		//NavigationView?.NavigationFinished(NavigationStack);
 		return;
 	}
 
@@ -121,7 +107,8 @@ public class StackNavigationManager
 			}
 
 			var containerViewController = new ParentViewController(NavigationViewHandler 
-				?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}"));
+				?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}"),
+				page);
 			containerViewController.View!.AddSubview(viewController.View!);
 			containerViewController.AddChildViewController(viewController);
 
