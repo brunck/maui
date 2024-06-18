@@ -106,14 +106,32 @@ public class StackNavigationManager
 				throw new InvalidOperationException("ViewController cannot be null.");
 			}
 
-			var containerViewController = new ParentViewController(NavigationViewHandler 
+			var containerViewController = new ParentViewController(NavigationViewHandler
 				?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}"),
 				page);
 			containerViewController.View!.AddSubview(viewController.View!);
 			containerViewController.AddChildViewController(viewController);
 
+			FixTitle(containerViewController, element);
+
 			newStack.Add(containerViewController);
 		}
+
 		NavigationController!.SetViewControllers([.. newStack], request.Animated);
+	}
+
+	private static void FixTitle(UIViewController viewController, IElement element)
+	{
+		// The title of the previous page from the top on the stack is messed up if we're doing a push, and this can mess up the back button title on the new top of the stack.
+		// We'll just make sure the title is correct on every page in the stack.
+		// This happens due to MauiNavigationImpl.OnPushAsync() updating the handler properties
+		// only in the first callback to NavigationPage.SendHandlerUpdateAsync() which is called before the platform navigation is done.
+		// That first callback invokes property updates when the NavigationPage.InternalChildren is manipulated and when the NavigationPage.CurrentPage is set.
+		// The subsequent callbacks passed to NavigationPage.SendHandlerUpdateAsync() don't do anything to update the handler properties.
+		// TODO: Figure out why the stack is too big
+		if (element is ITitledElement titledElement)
+		{
+			viewController.Title = titledElement.Title;
+		}
 	}
 }

@@ -44,8 +44,8 @@ internal class PlatformNavigationController : UINavigationController
 		window.BackButtonClicked();
 	}
 
-	// public override void PushViewController(UIViewController viewController, bool animated)
-	// {
+	public override void PushViewController(UIViewController viewController, bool animated)
+	{
 	// 	if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
 	// 	{
 	// 		throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
@@ -63,7 +63,8 @@ internal class PlatformNavigationController : UINavigationController
 	// 	viewController.DidMoveToParentViewController(containerViewController);
 
 	// 	base.PushViewController(containerViewController, animated);
-	// }
+	base.PushViewController(viewController, animated);
+	}
 
 	public override void ViewDidLoad()
 	{
@@ -79,6 +80,11 @@ internal class PlatformNavigationController : UINavigationController
 		}
 		
 		UpdateToolBarVisible();
+	}
+
+	public override void SetViewControllers(UIViewController[]? controllers, bool animated)
+	{
+		base.SetViewControllers(controllers, animated);
 	}
 
 	public override void ViewWillLayoutSubviews()
