@@ -46,24 +46,25 @@ internal class PlatformNavigationController : UINavigationController
 
 	public override void PushViewController(UIViewController viewController, bool animated)
 	{
-	// 	if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
-	// 	{
-	// 		throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
-	// 	}
+		if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
+		{
+			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+		}
 
-	// 	var containerViewController = new ParentViewController(handler);
+		var containerViewController = new ParentViewController(handler);
+		containerViewController.Title = viewController.Title;
 
-	// 	// if (TopViewController?.Title != null)
-	// 	// {
-	// 	// 	containerViewController.UpdateBackButtonTitle(TopViewController.Title);
-	// 	// }
+		// if (TopViewController?.Title != null)
+		// {
+		// 	containerViewController.UpdateBackButtonTitle(TopViewController.Title);
+		// }
 
-	// 	containerViewController.View!.AddSubview(viewController.View!);
-	// 	containerViewController.AddChildViewController(viewController);
-	// 	viewController.DidMoveToParentViewController(containerViewController);
+		containerViewController.View!.AddSubview(viewController.View!);
+		containerViewController.AddChildViewController(viewController);
+		viewController.DidMoveToParentViewController(containerViewController);
 
-	// 	base.PushViewController(containerViewController, animated);
-	base.PushViewController(viewController, animated);
+		base.PushViewController(containerViewController, animated);
+	//base.PushViewController(viewController, animated);
 	}
 
 	public override void ViewDidLoad()
@@ -178,12 +179,12 @@ internal class ParentViewController : UIViewController
 {
 	WeakReference<NavigationViewHandler> Handler { get; }
 
-	public WeakReference<IElement> Element { get; }
+	//public WeakReference<IElement> Element { get; }
 
-	public ParentViewController(NavigationViewHandler handler, IElement virtualView)
+	public ParentViewController(NavigationViewHandler handler)
 	{
 		Handler = new WeakReference<NavigationViewHandler>(handler);
-		Element = new WeakReference<IElement>(virtualView);
+		//Element = new WeakReference<IElement>(virtualView);
 	}
 
 	///////////////////// TODO: See UpdateFrames() in NavigationRenderer

@@ -49,28 +49,34 @@ public class StackNavigationManager
 		var incomingNavStack = request.NavigationStack;
 		var isInitialNavigation = currentNavStack.Count == 0 && incomingNavStack.Count == 1;
 
-		// if (isInitialNavigation || currentNavStack.Count < incomingNavStack.Count && incomingNavStack.Count - currentNavStack.Count == 1)
-		// {
-		// 	NavigationStack = new List<IView>(request.NavigationStack);
-		// 	NavigationController!.PushViewController(incomingNavStack[incomingNavStack.Count - 1].ToUIViewController(MauiContext), request.Animated);
-		// 	//NavigationView?.NavigationFinished(NavigationStack);
-		// 	return;
-		// }
+		if (isInitialNavigation || currentNavStack.Count < incomingNavStack.Count && incomingNavStack.Count - currentNavStack.Count == 1)
+		{
+			NavigationStack = new List<IView>(request.NavigationStack);
+			if (NavigationController.ViewControllers?.Length > 0)
+			{
+				var page = currentNavStack[currentNavStack.Count - 1];
+				FixNavigationItemTitle(NavigationController.ViewControllers[^1], page);
+			}
+			var newViewController = incomingNavStack[incomingNavStack.Count - 1].ToUIViewController(MauiContext);
+			NavigationController!.PushViewController(newViewController, request.Animated);
+			//NavigationView?.NavigationFinished(NavigationStack);
+			return;
+		}
 
-		// if (currentNavStack.Count > incomingNavStack.Count && currentNavStack.Count - incomingNavStack.Count == 1)
-		// {
-		// 	var currentTop = currentNavStack[currentNavStack.Count - 1];
-		// 	var incomingTop = incomingNavStack[incomingNavStack.Count - 1];
+		if (currentNavStack.Count > incomingNavStack.Count && currentNavStack.Count - incomingNavStack.Count == 1)
+		{
+			var currentTop = currentNavStack[currentNavStack.Count - 1];
+			var incomingTop = incomingNavStack[incomingNavStack.Count - 1];
 
-		// 	if (currentTop != incomingTop && currentNavStack.Count - incomingNavStack.Count == 1)
-		// 	{
-		// 		var topViewController = NavigationController!.TopViewController; // currentTop.ToUIViewController(MauiContext);
-		// 		NavigationStack = new List<IView>(request.NavigationStack);
-		// 		topViewController.NavigationController?.PopViewController(request.Animated);
-		// 		//NavigationController!.PopViewController(request.Animated);
-		// 		return;
-		// 	}
-		// }
+			if (currentTop != incomingTop && currentNavStack.Count - incomingNavStack.Count == 1)
+			{
+				var topViewController = NavigationController!.TopViewController; // currentTop.ToUIViewController(MauiContext);
+				NavigationStack = new List<IView>(request.NavigationStack);
+				topViewController.NavigationController?.PopViewController(request.Animated);
+				//NavigationController!.PopViewController(request.Animated);
+				return;
+			}
+		}
 
 		// The incoming and current stacks are the same length, multiple pages are being added/removed, or non-visible pages are being manipulated, so just sync the stacks
 		NavigationStack = new List<IView>(request.NavigationStack);
@@ -78,6 +84,7 @@ public class StackNavigationManager
 		return;
 	}
 
+	// TODO: If we use this for everything, figure out why the stack is too big
 	void SyncNativeStackWithNewStack(NavigationRequest request)
 	{
 		var newStack = new List<UIViewController>();
@@ -107,12 +114,13 @@ public class StackNavigationManager
 			}
 
 			var containerViewController = new ParentViewController(NavigationViewHandler
-				?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}"),
-				page);
+				?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}")//,
+				// page
+				);
 			containerViewController.View!.AddSubview(viewController.View!);
 			containerViewController.AddChildViewController(viewController);
 
-			FixTitle(containerViewController, element);
+			FixNavigationItemTitle(containerViewController, element);
 
 			newStack.Add(containerViewController);
 		}
@@ -120,18 +128,17 @@ public class StackNavigationManager
 		NavigationController!.SetViewControllers([.. newStack], request.Animated);
 	}
 
-	private static void FixTitle(UIViewController viewController, IElement element)
+	private static void FixNavigationItemTitle(UIViewController viewController, IElement element)
 	{
-		// The title of the previous page from the top on the stack is messed up if we're doing a push, and this can mess up the back button title on the new top of the stack.
-		// We'll just make sure the title is correct on every page in the stack.
+		// The navigation item title of the previous page from the top on the stack is messed up if we're doing a push, and this can mess up the back button title on the new top of the stack.
 		// This happens due to MauiNavigationImpl.OnPushAsync() updating the handler properties
 		// only in the first callback to NavigationPage.SendHandlerUpdateAsync() which is called before the platform navigation is done.
 		// That first callback invokes property updates when the NavigationPage.InternalChildren is manipulated and when the NavigationPage.CurrentPage is set.
 		// The subsequent callbacks passed to NavigationPage.SendHandlerUpdateAsync() don't do anything to update the handler properties.
-		// TODO: Figure out why the stack is too big
 		if (element is ITitledElement titledElement)
 		{
 			viewController.Title = titledElement.Title;
+			viewController.NavigationItem.Title = titledElement.Title;
 		}
 	}
 }
