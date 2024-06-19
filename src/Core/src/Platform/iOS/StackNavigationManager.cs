@@ -59,7 +59,6 @@ public class StackNavigationManager
 			}
 			var newViewController = incomingNavStack[incomingNavStack.Count - 1].ToUIViewController(MauiContext);
 			NavigationController!.PushViewController(newViewController, request.Animated);
-			//NavigationView?.NavigationFinished(NavigationStack);
 			return;
 		}
 
@@ -114,9 +113,7 @@ public class StackNavigationManager
 			}
 
 			var containerViewController = new ParentViewController(NavigationViewHandler
-				?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}")//,
-				// page
-				);
+				?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}"));
 			containerViewController.View!.AddSubview(viewController.View!);
 			containerViewController.AddChildViewController(viewController);
 
@@ -134,7 +131,7 @@ public class StackNavigationManager
 		// This happens due to MauiNavigationImpl.OnPushAsync() updating the handler properties
 		// only in the first callback to NavigationPage.SendHandlerUpdateAsync() which is called before the platform navigation is done.
 		// That first callback invokes property updates when the NavigationPage.InternalChildren is manipulated and when the NavigationPage.CurrentPage is set.
-		// The subsequent callbacks passed to NavigationPage.SendHandlerUpdateAsync() don't do anything to update the handler properties.
+		// The subsequent callbacks passed to NavigationPage.SendHandlerUpdateAsync() when pushing a page don't do anything to update the handler properties.
 		if (element is ITitledElement titledElement)
 		{
 			viewController.Title = titledElement.Title;

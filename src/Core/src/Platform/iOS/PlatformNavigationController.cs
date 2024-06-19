@@ -51,20 +51,16 @@ internal class PlatformNavigationController : UINavigationController
 			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
 		}
 
-		var containerViewController = new ParentViewController(handler);
-		containerViewController.Title = viewController.Title;
-
-		// if (TopViewController?.Title != null)
-		// {
-		// 	containerViewController.UpdateBackButtonTitle(TopViewController.Title);
-		// }
+		var containerViewController = new ParentViewController(handler)
+		{
+			Title = viewController.Title
+		};
 
 		containerViewController.View!.AddSubview(viewController.View!);
 		containerViewController.AddChildViewController(viewController);
 		viewController.DidMoveToParentViewController(containerViewController);
 
 		base.PushViewController(containerViewController, animated);
-	//base.PushViewController(viewController, animated);
 	}
 
 	public override void ViewDidLoad()
@@ -81,11 +77,6 @@ internal class PlatformNavigationController : UINavigationController
 		}
 		
 		UpdateToolBarVisible();
-	}
-
-	public override void SetViewControllers(UIViewController[]? controllers, bool animated)
-	{
-		base.SetViewControllers(controllers, animated);
 	}
 
 	public override void ViewWillLayoutSubviews()
@@ -179,22 +170,12 @@ internal class ParentViewController : UIViewController
 {
 	WeakReference<NavigationViewHandler> Handler { get; }
 
-	//public WeakReference<IElement> Element { get; }
-
 	public ParentViewController(NavigationViewHandler handler)
 	{
 		Handler = new WeakReference<NavigationViewHandler>(handler);
-		//Element = new WeakReference<IElement>(virtualView);
 	}
 
-	///////////////////// TODO: See UpdateFrames() in NavigationRenderer
-
-	// public override void ViewDidAppear(bool animated)
-	// {
-	// 	base.ViewDidAppear(animated);
-
-		
-	// }
+	//////////////////// TODO: See UpdateFrames() in NavigationRenderer
 
 	public override void ViewWillAppear(bool animated)
 	{
@@ -202,25 +183,15 @@ internal class ParentViewController : UIViewController
 		{
 			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
 		}
-		// TODO: not sure if we need this now that IsVisible is mapped in ToolbarHandler.iOS?
-		// var toolbar = (handler.NavigationManager?.ToolbarElement?.Toolbar) ?? throw new InvalidOperationException("Could not obtain Toolbar.");
-		// NavigationController?.UpdateNavigationBarVisibility(toolbar.IsVisible, animated);
 
 		var isTranslucent = NavigationController?.NavigationBar.Translucent ?? false;
 		EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
 
+		// Update the toolbar properties after the native navigation, since it doesn't happen automatically in the NavigationPage
+		// That will clean up the toolbar settings mapped to the currently visible view controller
 		var toolbarElement = handler.NavigationManager?.ToolbarElement;
 		var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
-		//toolbarHandler?._mapper.UpdateProperty(toolbarHandler, toolbarHandler.VirtualView, nameof(IToolbar.Title));
 		toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
-		//ToolbarHandler.Mapper.UpdateProperties(toolbarHandler!, toolbarHandler!.VirtualView);
-
-		// Update the toolbar properties after the native navigation, since it doesn't happen automatically in the NavigationPage
-		// That will clean up the toolbar and the currently visible view controller
-		// if (ToolbarHandler?.TryGetTarget(out ToolbarHandler? handler) ?? false)
-		// {
-		// 	handler._mapper.UpdateProperties(handler, handler.VirtualView);
-		// }
 
 		base.ViewWillAppear(animated);
 	}
