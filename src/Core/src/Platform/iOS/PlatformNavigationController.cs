@@ -44,25 +44,6 @@ internal class PlatformNavigationController : UINavigationController
 		window.BackButtonClicked();
 	}
 
-	public override void PushViewController(UIViewController viewController, bool animated)
-	{
-		if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
-		{
-			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
-		}
-
-		var containerViewController = new ParentViewController(handler)
-		{
-			Title = viewController.Title
-		};
-
-		containerViewController.View!.AddSubview(viewController.View!);
-		containerViewController.AddChildViewController(viewController);
-		viewController.DidMoveToParentViewController(containerViewController);
-
-		base.PushViewController(containerViewController, animated);
-	}
-
 	public override void ViewDidLoad()
 	{
 		base.ViewDidLoad();
@@ -166,7 +147,7 @@ internal class PlatformNavigationController : UINavigationController
 	}
 }
 
-internal class ParentViewController : UIViewController
+internal class ParentViewController : ContainerViewController
 {
 	WeakReference<NavigationViewHandler> Handler { get; }
 
