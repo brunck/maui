@@ -22,7 +22,6 @@ namespace Microsoft.Maui.Controls
 
 		public static void MapBackButtonTitle(IToolbarHandler handler, Toolbar toolbar)
 		{
-			//handler.PlatformView.UpdateTitleArea(toolbar);
 			handler.PlatformView.UpdateBackButtonTitle(toolbar);
 		}
 

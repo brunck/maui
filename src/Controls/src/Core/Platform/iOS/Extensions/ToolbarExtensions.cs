@@ -108,12 +108,6 @@ namespace Microsoft.Maui.Controls.Platform
 				return;
 			}
 
-			// if (!string.IsNullOrWhiteSpace(toolbar.Title))
-			// {
-			// 	viewController.NavigationItem.Title = toolbar.Title;
-			// 	return;
-			// }
-
 			var backButtonText = toolbar.BackButtonTitle;
 			if (backButtonText is null)
 			{
