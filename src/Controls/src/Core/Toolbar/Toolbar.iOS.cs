@@ -15,11 +15,6 @@ namespace Microsoft.Maui.Controls
 
 		public UINavigationController NavigationController => NavigationManager?.NavigationController ?? throw new NullReferenceException("Could not obtain NavigationController.");
 
-		public static void MapBackButtonVisible(IToolbarHandler handler, Toolbar toolbar)
-		{
-			handler.PlatformView.UpdateBackButtonVisibility(toolbar);
-		}
-
 		public static void MapBackButtonTitle(IToolbarHandler handler, Toolbar toolbar)
 		{
 			handler.PlatformView.UpdateBackButtonTitle(toolbar);

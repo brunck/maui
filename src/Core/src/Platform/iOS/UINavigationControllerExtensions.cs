@@ -15,5 +15,22 @@ namespace Microsoft.Maui.Platform
 				navigationController.SetNavigationBarHidden(!isNavigationbarVisible, animated);
 			}
 		}
+
+		public static void UpdateBackButtonVisibility(this UINavigationController navigationController, bool backButtonVisible)
+		{
+			var navigationItem = navigationController.TopViewController?.NavigationItem;
+
+			if (navigationItem == null)
+			{
+				return;
+			}
+
+			if (navigationItem.HidesBackButton == !backButtonVisible)
+			{
+				return;
+			}
+
+			navigationItem.HidesBackButton = !backButtonVisible;
+		}
 	}
 }

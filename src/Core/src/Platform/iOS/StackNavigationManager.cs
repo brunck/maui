@@ -119,8 +119,7 @@ public class StackNavigationManager
 
 	ParentViewController CreateParentViewController(IView view, IMauiContext mauiContext)
 	{
-		_ = view.ToPlatform(mauiContext);
-		return new ParentViewController(NavigationViewHandler 
+		return new ParentViewController(NavigationViewHandler
 			?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}"))
 		{
 			CurrentView = view,

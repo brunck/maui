@@ -11,15 +11,14 @@ namespace Microsoft.Maui.Controls.Platform
 {
 	internal static class ToolbarExtensions
 	{
-		internal static void UpdateTitleArea(this UINavigationBar navigationBar, Toolbar toolbar)
+		internal static void UpdateTitleArea(this UINavigationController navigationController, Toolbar toolbar)
 		{
 			ImageSource titleIcon = toolbar.TitleIcon;
 			var titleView = toolbar.TitleView;
 
 			// UpdateLeftBarButtonItem() ?
-			//navigationBar.UpdateBackButtonTitle(toolbar);
 
-			ClearTitleViewContainer(toolbar);
+			ClearTitleViewContainer(navigationController);
 			if (titleIcon == null || titleIcon.IsEmpty && titleView == null)
 			{
 				return;
@@ -29,14 +28,15 @@ namespace Microsoft.Maui.Controls.Platform
 			{
 				throw new InvalidOperationException("NavigationController is null.");
 			}
-			NavigationTitleAreaContainer titleViewContainer = new NavigationTitleAreaContainer((View)titleView, toolbar.NavigationController.NavigationBar);
+			NavigationTitleAreaContainer titleViewContainer = new NavigationTitleAreaContainer((View)titleView, navigationController.NavigationBar);
 
 			UpdateTitleImage(titleViewContainer, titleIcon);
-			toolbar.NavigationController.NavigationItem.TitleView = titleViewContainer;
+			navigationController.NavigationItem.TitleView = titleViewContainer;
 		}
 
-		internal static void UpdateBarBackground(this UINavigationBar navigationBar, Toolbar toolbar)
+		internal static void UpdateBarBackground(this UINavigationController navigationController, Toolbar toolbar)
 		{
+			var navigationBar = navigationController.NavigationBar;
 			var barBackgroundBrush = toolbar.BarBackground;
 			Graphics.Color? barBackgroundColor = null;
 
@@ -100,9 +100,9 @@ namespace Microsoft.Maui.Controls.Platform
 			}
 		}
 
-		internal static void UpdateBackButtonTitle(this UINavigationBar navigationBar, Toolbar toolbar)
+		internal static void UpdateBackButtonTitle(this UINavigationController navigationController, Toolbar toolbar)
 		{
-			var viewController = toolbar.NavigationController?.TopViewController;
+			var viewController = navigationController?.TopViewController;
 			if (viewController == null)
 			{
 				return;
@@ -243,8 +243,9 @@ namespace Microsoft.Maui.Controls.Platform
 			return parentViewController;
 		}
 
-		internal static void UpdateBarTextColor(this UINavigationBar navigationBar, Toolbar toolbar)
+		internal static void UpdateBarTextColor(this UINavigationController navigationController, Toolbar toolbar)
 		{
+			var navigationBar = navigationController.NavigationBar;
 			var barTextColor = toolbar.BarTextColor;
 
 			// Determine new title text attributes via global static data
@@ -308,14 +309,14 @@ namespace Microsoft.Maui.Controls.Platform
 			}
 		}
 
-		internal static void UpdateToolbarItems(this UINavigationBar navigationBar, Toolbar toolbar)
+		internal static void UpdateToolbarItems(this UINavigationController navigationController, Toolbar toolbar)
 		{
-			if (toolbar.NavigationController == null || toolbar.NavigationController.TopViewController == null)
+			if (navigationController.TopViewController == null)
 			{
 				return;
 			}
 
-			var navigationItem = toolbar.NavigationController.TopViewController.NavigationItem;
+			var navigationItem = navigationController.TopViewController.NavigationItem;
 
 			if (navigationItem.RightBarButtonItems != null)
 			{
@@ -325,7 +326,7 @@ namespace Microsoft.Maui.Controls.Platform
 				}
 			}
 
-			var toolbarItems = toolbar.NavigationController.TopViewController.ToolbarItems;
+			var toolbarItems = navigationController.TopViewController.ToolbarItems;
 			if (toolbarItems != null)
 			{
 				for (var i = 0; i < toolbarItems.Length; i++)
@@ -353,22 +354,21 @@ namespace Microsoft.Maui.Controls.Platform
 				primaries.Reverse();
 			}
 
-			toolbar.NavigationController!.TopViewController.NavigationItem.SetRightBarButtonItems(primaries == null ? [] : primaries.ToArray(),
+			navigationController!.TopViewController.NavigationItem.SetRightBarButtonItems(primaries == null ? [] : primaries.ToArray(),
 				false);
-			toolbar.NavigationController
-				.TopViewController.ToolbarItems = secondaries == null ? [] : secondaries.ToArray();
+			navigationController.TopViewController.ToolbarItems = secondaries == null ? [] : secondaries.ToArray();
 
-			toolbar.NavigationController.UpdateNavigationBarVisibility(toolbar.IsVisible, true); // TODO: check that we need this call at all 
+			navigationController.UpdateNavigationBarVisibility(toolbar.IsVisible, true); // TODO: check that we need this call at all 
 		}
 
-		internal static void UpdateBackButtonVisibility(this UINavigationBar navigationBar, Toolbar toolbar)
+		internal static void UpdateBackButtonVisibility(this UINavigationController navigationController, Toolbar toolbar)
 		{
-			if (toolbar.NavigationController == null)
+			if (navigationController == null)
 			{
 				throw new NullReferenceException("NavigationController is null.");
 			}
 
-			var navigationItem = toolbar.NavigationController.TopViewController?.NavigationItem;
+			var navigationItem = navigationController.TopViewController?.NavigationItem;
 
 			if (navigationItem == null)
 			{
@@ -410,9 +410,9 @@ namespace Microsoft.Maui.Controls.Platform
 //#pragma warning restore CA1416, CA1422
 //		}
 
-		static void ClearTitleViewContainer(Toolbar toolbar)
+		static void ClearTitleViewContainer(UINavigationController navigationController)
 		{
-			var navigationItem = toolbar.NavigationController?.TopViewController?.NavigationItem;
+			var navigationItem = navigationController?.TopViewController?.NavigationItem;
 			if (navigationItem == null)
 			{
 				return;
