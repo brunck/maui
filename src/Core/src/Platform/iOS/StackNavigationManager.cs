@@ -57,7 +57,7 @@ public class StackNavigationManager
 				var page = currentNavStack[currentNavStack.Count - 1];
 				FixTitles(NavigationController.ViewControllers[^1], page);
 			}
-			var newViewController = CreateParentViewController(incomingNavStack[incomingNavStack.Count - 1], MauiContext);
+			var newViewController = incomingNavStack[incomingNavStack.Count - 1].ToUIViewController(MauiContext);
 			NavigationController!.PushViewController(newViewController, request.Animated);
 			return;
 		}

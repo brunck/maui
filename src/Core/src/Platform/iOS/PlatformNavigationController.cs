@@ -275,22 +275,20 @@ internal class NavigationDelegate : UINavigationControllerDelegate
 		handler.VirtualView.NavigationFinished(handler.NavigationStack);
 	}
 
-	//public override void WillShowViewController(UINavigationController navigationController, [Transient] UIViewController viewController, bool animated)
-	//{
-	//	if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
-	//	{
-	//		throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
-	//	}
+	public override void WillShowViewController(UINavigationController navigationController, [Transient] UIViewController viewController, bool animated)
+	{
+		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+		{
+			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+		}
 
-	//	var toolbar = (handler.NavigationManager?.ToolbarElement?.Toolbar) ?? throw new InvalidOperationException("Could not obtain Toolbar.");
+		// Update the toolbar properties after the native navigation, since it doesn't happen automatically in the NavigationPage
+		// That will clean up the toolbar settings mapped to the currently visible view controller
+		var toolbarElement = handler.NavigationManager?.ToolbarElement;
+		var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
+		toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
 
-	//	//if (!NavigationController.TryGetTarget(out var navController))
-	//	//{
-	//	//	throw new InvalidOperationException("Could not obtain NavigationController.");
-	//	//}
-	//	viewController.NavigationController?.UpdateNavigationBarVisibility(toolbar.IsVisible, animated);
-
-	//	var isTranslucent = navigationController.NavigationBar.Translucent;
-	//	viewController.EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
-	//}
+		var isTranslucent = navigationController.NavigationBar.Translucent;
+		viewController.EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
+	}
 }
