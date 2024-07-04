@@ -88,43 +88,25 @@ public class StackNavigationManager
 		var newStack = new List<UIViewController>();
 		foreach (var page in request.NavigationStack)
 		{
-			UIViewController? viewController = null;
+			_ = page.ToPlatform(MauiContext);
+			// using PageViewController as-is here causes the page to be blank on a pop after remove page before current
+			var viewController = new UIViewController();
+			var handler = page.Handler;
 
-			if (page is IElement element)
-			{
-				var handler = page.Handler;
-				viewController = CreateParentViewController(page, MauiContext);
+			var pageRenderer = (IPlatformViewHandler)page.Handler!;
+			viewController.View!.AddSubview(pageRenderer.ViewController!.View!);
+			viewController.AddChildViewController(pageRenderer.ViewController);
 
-				if (handler is FlyoutViewHandler flyoutHandler)
-				{
-					System.Diagnostics.Trace.WriteLine($"Pushing a FlyoutPage onto a NavigationPage is not a supported UI pattern on iOS. " +
-						"Please see https://developer.apple.com/documentation/uikit/uisplitviewcontroller for more details.");
-				}
-			}
-			else
+			if (handler is FlyoutViewHandler flyoutHandler)
 			{
-				throw new InvalidOperationException("Page must be an IElement");
-			}
-
-			if (viewController == null)
-			{
-				throw new InvalidOperationException("ViewController cannot be null.");
+				System.Diagnostics.Trace.WriteLine($"Pushing a FlyoutPage onto a NavigationPage is not a supported UI pattern on iOS. " +
+					"Please see https://developer.apple.com/documentation/uikit/uisplitviewcontroller for more details.");
 			}
 
 			newStack.Add(viewController);
 		}
 
 		NavigationController!.SetViewControllers([.. newStack], request.Animated);
-	}
-
-	ParentViewController CreateParentViewController(IView view, IMauiContext mauiContext)
-	{
-		return new ParentViewController(NavigationViewHandler
-			?? throw new InvalidOperationException($"Could not convert handler to {nameof(NavigationViewHandler)}"))
-		{
-			CurrentView = view,
-			Context = mauiContext
-		};
 	}
 
 	static void FixTitles(UIViewController viewController, IElement element)

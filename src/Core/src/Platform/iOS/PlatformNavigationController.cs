@@ -147,36 +147,36 @@ internal class PlatformNavigationController : UINavigationController
 	}
 }
 
-internal class ParentViewController : ContainerViewController
-{
-	WeakReference<NavigationViewHandler> Handler { get; }
+// internal class ParentViewController : ContainerViewController
+// {
+// 	WeakReference<NavigationViewHandler> Handler { get; }
 
-	public ParentViewController(NavigationViewHandler handler)
-	{
-		Handler = new WeakReference<NavigationViewHandler>(handler);
-	}
+// 	public ParentViewController(NavigationViewHandler handler)
+// 	{
+// 		Handler = new WeakReference<NavigationViewHandler>(handler);
+// 	}
 
-	//////////////////// TODO: See UpdateFrames() in NavigationRenderer
+// 	//////////////////// TODO: See UpdateFrames() in NavigationRenderer
 
-	public override void ViewWillAppear(bool animated)
-	{
-		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
-		{
-			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
-		}
+// 	public override void ViewWillAppear(bool animated)
+// 	{
+// 		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
+// 		{
+// 			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+// 		}
 
-		var isTranslucent = NavigationController?.NavigationBar.Translucent ?? false;
-		EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
+// 		var isTranslucent = NavigationController?.NavigationBar.Translucent ?? false;
+// 		EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
 
-		// Update the toolbar properties after the native navigation, since it doesn't happen automatically in the NavigationPage
-		// That will clean up the toolbar settings mapped to the currently visible view controller
-		var toolbarElement = handler.NavigationManager?.ToolbarElement;
-		var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
-		toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
+// 		// Update the toolbar properties after the native navigation, since it doesn't happen automatically in the NavigationPage
+// 		// That will clean up the toolbar settings mapped to the currently visible view controller
+// 		var toolbarElement = handler.NavigationManager?.ToolbarElement;
+// 		var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
+// 		toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
 
-		base.ViewWillAppear(animated);
-	}
-}
+// 		base.ViewWillAppear(animated);
+// 	}
+// }
 
 class SecondaryToolbar : UIToolbar
 {

@@ -231,18 +231,6 @@ namespace Microsoft.Maui.Controls.Platform
 			return empty;
 		}
 
-		internal static ParentViewController? GetParentViewController(this UINavigationBar navigationBar)
-		{
-			var viewControllers = navigationBar.GetNavigationController()?.ViewControllers;
-			if (!viewControllers?.Any() ?? true)
-			{
-				return null;
-			}
-
-			var parentViewController = viewControllers!.Last() as ParentViewController;
-			return parentViewController;
-		}
-
 		internal static void UpdateBarTextColor(this UINavigationController navigationController, Toolbar toolbar)
 		{
 			var navigationBar = navigationController.NavigationBar;
