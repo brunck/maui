@@ -49,7 +49,8 @@ public class StackNavigationManager
 		var incomingNavStack = request.NavigationStack;
 		var isInitialNavigation = currentNavStack.Count == 0 && incomingNavStack.Count == 1;
 
-		if (isInitialNavigation || currentNavStack.Count < incomingNavStack.Count && incomingNavStack.Count - currentNavStack.Count == 1)
+		if (isInitialNavigation || currentNavStack.Count < incomingNavStack.Count && incomingNavStack.Count - currentNavStack.Count == 1
+			&& currentNavStack[currentNavStack.Count - 1] != incomingNavStack[incomingNavStack.Count - 1])
 		{
 			NavigationStack = new List<IView>(request.NavigationStack);
 			if (NavigationController.ViewControllers?.Length > 0)

@@ -295,17 +295,6 @@ namespace Maui.Controls.Sample
 				}
 			});
 
-			Microsoft.Maui.Handlers.PageHandler.Mapper.AppendToMapping(nameof(Page.Background), (handler, view) =>
-			{
-#if IOS
-				if (view is Page)
-				{
-					handler.PlatformView.BackgroundColor = 
-						OperatingSystem.IsIOSVersionAtLeast(13) ? UIKit.UIColor.SystemBackground : UIKit.UIColor.White;
-				}
-#endif
-			});
-
 			return appBuilder.Build();
 		}
 	}
