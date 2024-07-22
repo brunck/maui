@@ -91,6 +91,7 @@ public class StackNavigationManager
 		{
 			_ = page.ToPlatform(MauiContext);
 			// using PageViewController as-is here causes the page to be blank on a pop after remove page before current
+			// using ContainerViewController directly causes bad animation on a pop
 			var viewController = new UIViewController();
 			var handler = page.Handler;
 
