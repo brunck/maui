@@ -345,8 +345,6 @@ namespace Microsoft.Maui.Controls.Platform
 			navigationController!.TopViewController.NavigationItem.SetRightBarButtonItems(primaries == null ? [] : primaries.ToArray(),
 				false);
 			navigationController.TopViewController.ToolbarItems = secondaries == null ? [] : secondaries.ToArray();
-
-			navigationController.UpdateNavigationBarVisibility(toolbar.IsVisible, true); // TODO: check that we need this call at all 
 		}
 
 		internal static void UpdateBackButtonVisibility(this UINavigationController navigationController, Toolbar toolbar)

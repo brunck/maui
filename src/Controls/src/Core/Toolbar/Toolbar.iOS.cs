@@ -48,6 +48,10 @@ namespace Microsoft.Maui.Controls
 		public static void MapToolbarItems(IToolbarHandler handler, Toolbar toolbar)
 		{
 			handler.PlatformView.UpdateToolbarItems(toolbar);
+			if (handler.PlatformView is PlatformNavigationController navController)
+			{
+				navController.UpdateToolBarVisible();
+			}
 		}
 	}
 

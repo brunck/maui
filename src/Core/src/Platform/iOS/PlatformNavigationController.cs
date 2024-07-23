@@ -84,7 +84,7 @@ internal class PlatformNavigationController : UINavigationController
 		}
 	}
 
-	void UpdateToolBarVisible()
+	public void UpdateToolBarVisible()
 	{
 		if (!SecondaryToolbar.TryGetTarget(out var secondaryToolbar))
 		{
@@ -105,8 +105,7 @@ internal class PlatformNavigationController : UINavigationController
 		if (currentHidden != secondaryToolbar.Hidden)
 		{
 
-		// 	if (Current?.Handler != null)
-		// 		Current.ToPlatform().InvalidateMeasure(Current);
+		TopViewController?.InvalidateViews();
 
 		// 	if (VisibleViewController is ParentViewController pvc)
 		// 		pvc.UpdateFrames();
