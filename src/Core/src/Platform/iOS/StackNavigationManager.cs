@@ -10,7 +10,7 @@ public class StackNavigationManager
 
 	IReadOnlyList<IView> NavigationStack { get; set; } = [];
 	IStackNavigationView? NavigationView { get; set; }
-	UINavigationController? NavigationController { get; set; }
+	PlatformNavigationController? NavigationController { get; set; }
 	NavigationViewHandler? NavigationViewHandler { get; set; }
 
 	public StackNavigationManager(IMauiContext mauiContext)
@@ -18,7 +18,7 @@ public class StackNavigationManager
 		MauiContext = mauiContext;
 	}
 
-	public virtual void Connect(IStackNavigationView virtualView, UINavigationController navigationController, NavigationViewHandler navigationViewHandler)
+	public virtual void Connect(IStackNavigationView virtualView, PlatformNavigationController navigationController, NavigationViewHandler navigationViewHandler)
 	{
 		NavigationView = virtualView;
 		NavigationController = navigationController;
@@ -58,7 +58,7 @@ public class StackNavigationManager
 				var page = currentNavStack[currentNavStack.Count - 1];
 				FixTitles(NavigationController.ViewControllers[^1], page);
 			}
-			var newViewController = incomingNavStack[incomingNavStack.Count - 1].ToUIViewController(MauiContext);
+			var newViewController = CreateViewControllerForPage(incomingNavStack[incomingNavStack.Count - 1]);
 			NavigationController!.PushViewController(newViewController, request.Animated);
 			return;
 		}
@@ -89,27 +89,33 @@ public class StackNavigationManager
 		var newStack = new List<UIViewController>();
 		foreach (var page in request.NavigationStack)
 		{
-			_ = page.ToPlatform(MauiContext);
-			// using PageViewController as-is here causes the page to be blank on a pop after remove page before current
-			// using ContainerViewController directly causes bad animation on a pop
-			var viewController = new UIViewController();
-			var handler = page.Handler;
-
-			var pageRenderer = (IPlatformViewHandler)page.Handler!;
-			viewController.View!.AddSubview(pageRenderer.ViewController!.View!);
-			viewController.AddChildViewController(pageRenderer.ViewController);
-			pageRenderer.ViewController.DidMoveToParentViewController(viewController);
-
-			if (handler is FlyoutViewHandler flyoutHandler)
-			{
-				System.Diagnostics.Trace.WriteLine($"Pushing a FlyoutPage onto a NavigationPage is not a supported UI pattern on iOS. " +
-					"Please see https://developer.apple.com/documentation/uikit/uisplitviewcontroller for more details.");
-			}
-
+			var viewController = CreateViewControllerForPage(page);
 			newStack.Add(viewController);
 		}
 
 		NavigationController!.SetViewControllers([.. newStack], request.Animated);
+	}
+
+	ParentViewController CreateViewControllerForPage(IView page)
+	{
+		_ = page.ToPlatform(MauiContext);
+		// using PageViewController as-is here causes the page to be blank on a pop after remove page before current
+		// using ContainerViewController directly causes bad animation on a pop
+		var viewController = new ParentViewController(NavigationViewHandler!, NavigationController!);
+		var handler = page.Handler;
+
+		if (handler is FlyoutViewHandler flyoutHandler)
+		{
+			System.Diagnostics.Trace.WriteLine($"Pushing a FlyoutPage onto a NavigationPage is not a supported UI pattern on iOS. " +
+				"Please see https://developer.apple.com/documentation/uikit/uisplitviewcontroller for more details.");
+		}
+
+		var pageRenderer = (IPlatformViewHandler)page.Handler!;
+		viewController.View!.AddSubview(pageRenderer.ViewController!.View!);
+		viewController.AddChildViewController(pageRenderer.ViewController);
+		pageRenderer.ViewController.DidMoveToParentViewController(viewController);
+
+		return viewController;
 	}
 
 	static void FixTitles(UIViewController viewController, IElement element)
