@@ -57,7 +57,7 @@ internal class PlatformNavigationController : UINavigationController
 			secondaryToolbar.Hidden = true;
 		}
 		
-		UpdateToolBarVisible();
+		UpdateSecondaryToolBarVisible();
 	}
 
 	public override void ViewWillLayoutSubviews()
@@ -70,7 +70,7 @@ internal class PlatformNavigationController : UINavigationController
 
 		if (SecondaryToolbar.TryGetTarget(out var secondaryToolbar))
 		{
-			UpdateToolBarVisible();
+			UpdateSecondaryToolBarVisible();
 
 			var navBarFrameBottom = Math.Min(NavigationBar.Frame.Bottom, 140);
 			var toolbar = (handler.NavigationManager?.ToolbarElement?.Toolbar) ?? throw new InvalidOperationException("Could not obtain Toolbar.");
@@ -84,7 +84,7 @@ internal class PlatformNavigationController : UINavigationController
 		}
 	}
 
-	public void UpdateToolBarVisible()
+	public void UpdateSecondaryToolBarVisible()
 	{
 		if (!SecondaryToolbar.TryGetTarget(out var secondaryToolbar))
 		{
