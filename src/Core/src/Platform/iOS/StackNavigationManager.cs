@@ -98,6 +98,7 @@ public class StackNavigationManager
 			var pageRenderer = (IPlatformViewHandler)page.Handler!;
 			viewController.View!.AddSubview(pageRenderer.ViewController!.View!);
 			viewController.AddChildViewController(pageRenderer.ViewController);
+			pageRenderer.ViewController.DidMoveToParentViewController(viewController);
 
 			if (handler is FlyoutViewHandler flyoutHandler)
 			{
