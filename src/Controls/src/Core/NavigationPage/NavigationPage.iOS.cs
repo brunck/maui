@@ -10,7 +10,7 @@ namespace Microsoft.Maui.Controls
 			MapPrefersLargeTitles((INavigationViewHandler)handler, navigationPage);
 
 		public static void MapIsNavigationBarTranslucent(NavigationViewHandler handler, NavigationPage navigationPage) =>
-			MapPrefersLargeTitles((INavigationViewHandler)handler, navigationPage);
+			MapIsNavigationBarTranslucent((INavigationViewHandler)handler, navigationPage);
 
 		public static void MapPrefersLargeTitles(INavigationViewHandler handler, NavigationPage navigationPage)
 		{

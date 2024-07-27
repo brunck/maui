@@ -90,8 +90,7 @@ public class PlatformNavigationController : UINavigationController
 			var hasNavigationBar = toolbar.IsVisible;
 
 			// Use 0 if the NavBar is hidden or will be hidden
-			// TODO: remove temp hack for NavigationBar.Translucent
-			var toolbarY = NavigationBarHidden || /*NavigationBar.Translucent*/ false || !hasNavigationBar ? 0 : navBarFrameBottom;
+			var toolbarY = NavigationBarHidden || NavigationBar.Translucent || !hasNavigationBar ? 0 : navBarFrameBottom;
 			secondaryToolbar.Frame = new RectangleF(0, (nfloat)toolbarY, View!.Frame.Width, secondaryToolbar.Frame.Height);
 
 			handler.VirtualView.Arrange(View.Bounds.ToRectangle());
