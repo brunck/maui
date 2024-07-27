@@ -104,7 +104,7 @@ public class PlatformNavigationController : UINavigationController
 
 		if (currentHidden != secondaryToolbar.Hidden)
 		{
-			TopViewController?.InvalidateViews();
+			TopViewController?.InvalidateMeasure();
 
 			if (VisibleViewController is ParentViewController pvc)
 			{

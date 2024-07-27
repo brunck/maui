@@ -20,17 +20,11 @@ namespace Microsoft.Maui.Platform
 			}
 		}
 
-		public static void InvalidateViews(this UIViewController viewController)
+		public static void InvalidateMeasure(this UIViewController viewController)
 		{
 			if (viewController != null)
 			{
 				viewController.View?.SetNeedsLayout();
-
-				foreach (var childViewController in viewController.ChildViewControllers)
-				{
-					childViewController.View?.SetNeedsLayout();
-				}
-
 				viewController.View?.Superview?.SetNeedsLayout();
 			}
 		}
