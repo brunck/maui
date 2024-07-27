@@ -46,23 +46,10 @@ public class PlatformNavigationController : UINavigationController
 		window.BackButtonClicked();
 	}
 
-	// TODO: update these properties properly
-	// void UpdateUseLargeTitles()
-	// {
-	// 	_viewHandlerWrapper.UpdateProperty(PrefersLargeTitlesProperty.PropertyName);
-	// }
-
-	// void UpdateTranslucent()
-	// {
-	// 	_viewHandlerWrapper.UpdateProperty(IsNavigationBarTranslucentProperty.PropertyName);
-	// }
-
 	public override void ViewDidLoad()
 	{
 		base.ViewDidLoad();
 
-		// TODO: update translucent property?
-		
 		SecondaryToolbar.SetTarget(new SecondaryToolbar { Frame = new RectangleF(0, 0, 320, 44) });
 		if (SecondaryToolbar.TryGetTarget(out var secondaryToolbar))
 		{
