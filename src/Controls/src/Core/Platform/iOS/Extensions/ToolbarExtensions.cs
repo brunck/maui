@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using CoreGraphics;
 using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
@@ -9,14 +8,14 @@ using UIKit;
 
 namespace Microsoft.Maui.Controls.Platform
 {
-	internal static class ToolbarExtensions
+	public static class ToolbarExtensions
 	{
-		internal static void UpdateTitleArea(this UINavigationController navigationController, Toolbar toolbar)
+		public static void UpdateTitleArea(this UINavigationController navigationController, Toolbar toolbar)
 		{
 			ImageSource titleIcon = toolbar.TitleIcon;
 			var titleView = toolbar.TitleView;
 
-			// UpdateLeftBarButtonItem() ?
+			// ? UpdateLeftBarButtonItem() ?
 
 			ClearTitleViewContainer(navigationController);
 			if (titleIcon == null || titleIcon.IsEmpty && titleView == null)
@@ -34,7 +33,7 @@ namespace Microsoft.Maui.Controls.Platform
 			navigationController.NavigationItem.TitleView = titleViewContainer;
 		}
 
-		internal static void UpdateBarBackground(this UINavigationController navigationController, Toolbar toolbar)
+		public static void UpdateBarBackground(this UINavigationController navigationController, Toolbar toolbar)
 		{
 			var navigationBar = navigationController.NavigationBar;
 			var barBackgroundBrush = toolbar.BarBackground;
@@ -54,7 +53,7 @@ namespace Microsoft.Maui.Controls.Platform
 				{
 					navigationBarAppearance.ConfigureWithOpaqueBackground();
 					navigationBarAppearance.BackgroundColor = ColorExtensions.BackgroundColor;
-					navigationBar.SetupDefaultNavigationBarAppearance();
+					navigationBar.SetupDefaultNavigationBarAppearance(); // ? does this need  to be called on the parent  view controller instead?
 				}
 				else
 				{
@@ -100,7 +99,7 @@ namespace Microsoft.Maui.Controls.Platform
 			}
 		}
 
-		internal static void UpdateBackButtonTitle(this UINavigationController navigationController, Toolbar toolbar)
+		public static void UpdateBackButtonTitle(this UINavigationController navigationController, Toolbar toolbar)
 		{
 			var viewController = navigationController?.TopViewController;
 			if (viewController == null)
@@ -118,7 +117,9 @@ namespace Microsoft.Maui.Controls.Platform
 			viewController.NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = backButtonText, Style = UIBarButtonItemStyle.Plain };
 		}
 
-		internal static void SetupDefaultNavigationBarAppearance(this UINavigationBar navBar)
+		// TODO: does this need to be called in ViewWillAppear in the parent view controller?
+		// ?: does this even need to be in Controls/Core? looks like not
+		public static void SetupDefaultNavigationBarAppearance(this UINavigationBar navBar)
 		{
 			if (!(OperatingSystem.IsIOSVersionAtLeast(13) || OperatingSystem.IsMacCatalystVersionAtLeast(13)))
 			{
@@ -215,7 +216,7 @@ namespace Microsoft.Maui.Controls.Platform
 			navBar.ScrollEdgeAppearance?.SetBackIndicatorImage(backIndicatorImage, backIndicatorTransitionMaskImage);
 		}
 
-		internal static UIImage GetEmptyBackIndicatorImage()
+		public static UIImage GetEmptyBackIndicatorImage()
 		{
 			var rect = RectangleF.Empty;
 			SizeF size = rect.Size;
@@ -231,7 +232,7 @@ namespace Microsoft.Maui.Controls.Platform
 			return empty;
 		}
 
-		internal static void UpdateBarTextColor(this UINavigationController navigationController, Toolbar toolbar)
+		public static void UpdateBarTextColor(this UINavigationController navigationController, Toolbar toolbar)
 		{
 			var navigationBar = navigationController.NavigationBar;
 			var barTextColor = toolbar.BarTextColor;
@@ -297,7 +298,7 @@ namespace Microsoft.Maui.Controls.Platform
 			}
 		}
 
-		internal static void UpdateToolbarItems(this UINavigationController navigationController, Toolbar toolbar)
+		public static void UpdateToolbarItems(this UINavigationController navigationController, Toolbar toolbar)
 		{
 			if (navigationController.TopViewController == null)
 			{
@@ -347,7 +348,7 @@ namespace Microsoft.Maui.Controls.Platform
 			navigationController.TopViewController.ToolbarItems = secondaries == null ? [] : secondaries.ToArray();
 		}
 
-		internal static void UpdateBackButtonVisibility(this UINavigationController navigationController, Toolbar toolbar)
+		public static void UpdateBackButtonVisibility(this UINavigationController navigationController, Toolbar toolbar)
 		{
 			if (navigationController == null)
 			{
@@ -368,33 +369,6 @@ namespace Microsoft.Maui.Controls.Platform
 
 			navigationItem.HidesBackButton = !toolbar.BackButtonVisible;
 		}
-
-		// TODO: StatusBarTextColorModeProperty is on NavigationPage, look at NavigationRenderer and how it uses this
-//		static void SetStatusBarStyle()
-//		{
-//			var barTextColor = NavPage.BarTextColor;
-//			var statusBarColorMode = NavPage.OnThisPlatform().GetStatusBarTextColorMode();
-
-//#pragma warning disable CA1416, CA1422 // TODO:   'UIApplication.StatusBarStyle' is unsupported on: 'ios' 9.0 and later
-//			if (statusBarColorMode == StatusBarTextColorMode.DoNotAdjust || barTextColor?.GetLuminosity() <= 0.5)
-//			{
-//				// Use dark text color for status bar
-//				if (OperatingSystem.IsIOSVersionAtLeast(13) || OperatingSystem.IsMacCatalystVersionAtLeast(13))
-//				{
-//					UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.DarkContent;
-//				}
-//				else
-//				{
-//					UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.Default;
-//				}
-//			}
-//			else
-//			{
-//				// Use light text color for status bar
-//				UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
-//			}
-//#pragma warning restore CA1416, CA1422
-//		}
 
 		static void ClearTitleViewContainer(UINavigationController navigationController)
 		{

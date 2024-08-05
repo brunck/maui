@@ -6,6 +6,7 @@ using UIKit;
 using PointF = CoreGraphics.CGPoint;
 using RectangleF = CoreGraphics.CGRect;
 using SizeF = CoreGraphics.CGSize;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
 namespace Microsoft.Maui.Controls
 {
@@ -42,7 +43,15 @@ namespace Microsoft.Maui.Controls
 
 		public static void MapBarTextColor(IToolbarHandler handler, Toolbar toolbar)
 		{
-			handler.PlatformView.UpdateBarTextColor(toolbar);
+			if (toolbar is not NavigationPageToolbar navPageToolbar)
+			{
+				return;
+			}
+
+			handler.PlatformView.UpdateBarTextColor(navPageToolbar);
+			var barTextColor = navPageToolbar.CurrentNavigationPage.BarTextColor;
+			var statusBarColorMode = navPageToolbar.CurrentNavigationPage.OnThisPlatform().GetStatusBarTextColorMode();
+			toolbar.NavigationController.SetStatusBarStyle(statusBarColorMode, barTextColor);
 		}
 
 		public static void MapToolbarItems(IToolbarHandler handler, Toolbar toolbar)

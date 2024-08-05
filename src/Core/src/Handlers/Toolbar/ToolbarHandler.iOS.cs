@@ -14,6 +14,7 @@ namespace Microsoft.Maui.Handlers
 			return NavigationManager?.NavigationController ?? throw new NullReferenceException("Could not obtain Navigation controller.");
 		}
 
+		// TODO: Check if this happens for all toolbars, not just NavigationPageToolbar
 		public static void MapTitle(IToolbarHandler arg1, IToolbar arg2)
 		{
 			if (arg1 is ToolbarHandler toolbarHandler)

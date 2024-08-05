@@ -17,7 +17,11 @@ public class PlatformNavigationController : UINavigationController
 	
 	public WeakReference<UIToolbar> SecondaryToolbar { get; set; } = new WeakReference<UIToolbar>(new SecondaryToolbar());
 
-	public bool IsDisposed {get => _disposed;}
+	UIImage? DefaultNavBarShadowImage { get; set; }
+
+	bool HasNavigationBar { get; set; }
+
+	public bool IsDisposed { get => _disposed; }
 
 	public PlatformNavigationController(NavigationViewHandler handler)
 	{
@@ -74,10 +78,11 @@ public class PlatformNavigationController : UINavigationController
 
 			var navBarFrameBottom = Math.Min(NavigationBar.Frame.Bottom, 140);
 			var toolbar = (handler.NavigationManager?.ToolbarElement?.Toolbar) ?? throw new InvalidOperationException("Could not obtain Toolbar.");
-			var hasNavigationBar = toolbar.IsVisible;
+			// Save the state of the current page we are calculating, this will fire before CurrentPage is updated
+			HasNavigationBar = toolbar.IsVisible;
 
 			// Use 0 if the NavBar is hidden or will be hidden
-			var toolbarY = NavigationBarHidden || NavigationBar.Translucent || !hasNavigationBar ? 0 : navBarFrameBottom;
+			var toolbarY = NavigationBarHidden || NavigationBar.Translucent || !HasNavigationBar ? 0 : navBarFrameBottom;
 			secondaryToolbar.Frame = new RectangleF(0, (nfloat)toolbarY, View!.Frame.Width, secondaryToolbar.Frame.Height);
 
 			handler.VirtualView.Arrange(View.Bounds.ToRectangle());
@@ -114,6 +119,80 @@ public class PlatformNavigationController : UINavigationController
 
 		TopViewController?.NavigationItem?.TitleView?.SizeToFit();
 		TopViewController?.NavigationItem?.TitleView?.LayoutSubviews();
+	}
+
+	public void UpdateHideNavigationBarSeparator(bool shouldHideNavigationBarSeparator)
+	{
+		// Just setting the ShadowImage is good for iOS 11
+		DefaultNavBarShadowImage ??= NavigationBar.ShadowImage;
+
+		if (OperatingSystem.IsIOSVersionAtLeast(13) || OperatingSystem.IsMacCatalystVersionAtLeast(13))
+		{
+			if (shouldHideNavigationBarSeparator)
+			{
+				if (NavigationBar.CompactAppearance != null)
+				{
+					NavigationBar.CompactAppearance.ShadowColor = UIColor.Clear;
+				}
+
+				NavigationBar.StandardAppearance.ShadowColor = UIColor.Clear;
+
+				if (NavigationBar.ScrollEdgeAppearance != null)
+				{
+					NavigationBar.ScrollEdgeAppearance.ShadowColor = UIColor.Clear;
+				}
+			}
+			else
+			{
+				if (NavigationBar.CompactAppearance != null)
+				{
+					NavigationBar.CompactAppearance.ShadowColor = UIColor.FromRGBA(0, 0, 0, 76);
+				}
+				
+				NavigationBar.StandardAppearance.ShadowColor = UIColor.FromRGBA(0, 0, 0, 76);
+				
+				if (NavigationBar.ScrollEdgeAppearance != null)
+				{
+					NavigationBar.ScrollEdgeAppearance.ShadowColor = UIColor.FromRGBA(0, 0, 0, 76);
+				}
+			}
+		}
+		else
+		{
+			if (shouldHideNavigationBarSeparator)
+			{
+				NavigationBar.ShadowImage = new UIImage();
+			}
+			else
+			{
+				NavigationBar.ShadowImage = DefaultNavBarShadowImage;
+			}
+		}
+	}
+
+	public void UpdateHomeIndicatorAutoHidden()
+	{
+		SetNeedsUpdateOfHomeIndicatorAutoHidden();
+	}
+
+	public void UpdateStatusBarHidden()
+	{
+		SetNeedsStatusBarAppearanceUpdate();
+	}
+
+	public void ValidateNavBarExists(bool newNavigationPageHasNavBar)
+	{
+		if (!NavigationHandler.TryGetTarget(out NavigationViewHandler? handler))
+		{
+			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
+		}
+
+		// if the last time we did ViewDidLayoutSubviews we had another value for HasNavigationBar,
+		// we will need to re-layout. This is because CurrentPage is updated async of the layout happening
+		if (HasNavigationBar != newNavigationPageHasNavBar)
+		{
+			View!.InvalidateMeasure(handler.VirtualView);
+		}
 	}
 
 	protected override void Dispose(bool disposing)
@@ -188,10 +267,7 @@ public class ParentViewController : ContainerViewController
 
 	public override void ViewWillAppear(bool animated)
 	{
-		if (!Handler.TryGetTarget(out NavigationViewHandler? handler))
-		{
-			throw new InvalidOperationException("Could not obtain NavigationViewHandler.");
-		}
+		// ? SetupDefaultNavigationBarAppearance?
 
 		var isTranslucent = NavigationController?.NavigationBar.Translucent ?? false;
 		EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
