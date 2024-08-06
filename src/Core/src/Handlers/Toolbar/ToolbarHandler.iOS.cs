@@ -17,18 +17,12 @@ namespace Microsoft.Maui.Handlers
 		// TODO: Check if this happens for all toolbars, not just NavigationPageToolbar
 		public static void MapTitle(IToolbarHandler arg1, IToolbar arg2)
 		{
-			if (arg1 is ToolbarHandler toolbarHandler)
-			{
-				toolbarHandler.PlatformView.TopViewController?.UpdateNavigationBarTitle(arg2.Title);
-			}
+			arg1.PlatformView.TopViewController?.UpdateNavigationBarTitle(arg2.Title);
 		}
 
 		public static void MapIsVisible(IToolbarHandler handler, IToolbar toolbar)
 		{
-			if (handler is ToolbarHandler toolbarHandler)
-			{
-				toolbarHandler.PlatformView.UpdateNavigationBarVisibility(toolbar.IsVisible, true); // TODO: maybe this needs to go through the ViewController (top one?)
-			}
+			handler.PlatformView.UpdateNavigationBarVisibility(toolbar.IsVisible, true);
 		}
 
 		public static void MapBackButtonVisible(IToolbarHandler handler, IToolbar toolbar)

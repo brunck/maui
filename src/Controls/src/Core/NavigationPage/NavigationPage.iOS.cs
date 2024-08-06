@@ -69,7 +69,7 @@ namespace Microsoft.Maui.Controls
 
 		public static void MapStatusBarTextColorMode(INavigationViewHandler handler, NavigationPage navigationPage)
 		{
-			if (handler is IPlatformViewHandler nvh && nvh.ViewController is UINavigationController navigationController)
+			if (handler is IPlatformViewHandler nvh && nvh.ViewController is UINavigationController navigationController && navigationPage.Toolbar != null)
 			{
 				navigationController.UpdateBarTextColor(navigationPage.Toolbar);
 				var barTextColor = navigationPage.BarTextColor;
@@ -85,6 +85,27 @@ namespace Microsoft.Maui.Controls
 				navigationController.ValidateNavBarExists(GetHasNavigationBar(navigationPage));
 			}
 		}
+
+		// void UpdateLargeTitles()
+		// 	{
+		// 		var page = Child;
+		// 		if (page != null && OperatingSystem.IsIOSVersionAtLeast(11))
+		// 		{
+		// 			var largeTitleDisplayMode = page.OnThisPlatform().LargeTitleDisplay();
+		// 			switch (largeTitleDisplayMode)
+		// 			{
+		// 				case LargeTitleDisplayMode.Always:
+		// 					NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Always;
+		// 					break;
+		// 				case LargeTitleDisplayMode.Automatic:
+		// 					NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Automatic;
+		// 					break;
+		// 				case LargeTitleDisplayMode.Never:
+		// 					NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Never;
+		// 					break;
+		// 			}
+		// 		}
+		// 	}
 
 		public static void MapToolbar(IElementHandler handler, IToolbarElement element)
 		{

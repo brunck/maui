@@ -121,6 +121,8 @@ public class PlatformNavigationController : UINavigationController
 		TopViewController?.NavigationItem?.TitleView?.LayoutSubviews();
 	}
 
+	// TODO: SetFlyoutLeftBarButton(UIViewController containerController, FlyoutPage FlyoutPage)?
+
 	public void UpdateHideNavigationBarSeparator(bool shouldHideNavigationBarSeparator)
 	{
 		// Just setting the ShadowImage is good for iOS 11
@@ -267,13 +269,51 @@ public class ParentViewController : ContainerViewController
 
 	public override void ViewWillAppear(bool animated)
 	{
-		// ? SetupDefaultNavigationBarAppearance?
+		if (!NavController.TryGetTarget(out var navigationController))
+		{
+			throw new InvalidOperationException("Could not obtain NavigationController.");
+		}
+
+		navigationController.NavigationBar.SetupDefaultNavigationBarAppearance();
 
 		var isTranslucent = NavigationController?.NavigationBar.Translucent ?? false;
 		EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
 
 		base.ViewWillAppear(animated);
 	}
+
+	public override void ViewDidDisappear(bool animated)
+	{
+		base.ViewDidDisappear(animated);
+
+		if (NavigationItem?.RightBarButtonItems == null)
+		{
+			return;
+		}
+
+		// force a redraw for right toolbar items by resetting TintColor to prevent
+		// toolbar items being grayed out when canceling swipe to a previous page
+		foreach (var item in NavigationItem?.RightBarButtonItems!)
+		{
+			if (item.Image != null)
+			{
+				continue;
+			}
+
+			var tintColor = item.TintColor;
+			item.TintColor = tintColor == null ? UIColor.Clear : null;
+			item.TintColor = tintColor;
+		}
+	}
+
+	// TODO: do this?
+	// public override void ViewWillTransitionToSize(SizeF toSize, IUIViewControllerTransitionCoordinator coordinator)
+	// {
+	// 	base.ViewWillTransitionToSize(toSize, coordinator);
+
+	// 	if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+	// 		UpdateLeftBarButtonItem();
+	// }
 
 	public override void ViewDidLayoutSubviews()
 	{
