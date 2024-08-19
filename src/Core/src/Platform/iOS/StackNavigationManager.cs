@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Maui.ApplicationModel;
 using UIKit;
 
 namespace Microsoft.Maui.Platform;
@@ -99,9 +100,9 @@ public class StackNavigationManager
 	ParentViewController CreateViewControllerForPage(IView page)
 	{
 		_ = page.ToPlatform(MauiContext);
-		// using PageViewController as-is here causes the page to be blank on a pop after remove page before current
+		// using PageViewController as-is causes the page to be blank on a pop after remove page before current
 		// using ContainerViewController directly causes bad animation on a pop
-		var viewController = new ParentViewController(NavigationViewHandler!, NavigationController!);
+		// we also need the ParentViewController functionality
 		var handler = page.Handler;
 
 		if (handler is FlyoutViewHandler flyoutHandler)
@@ -110,10 +111,13 @@ public class StackNavigationManager
 				"Please see https://developer.apple.com/documentation/uikit/uisplitviewcontroller for more details.");
 		}
 
-		var pageRenderer = (IPlatformViewHandler)page.Handler!;
-		viewController.View!.AddSubview(pageRenderer.ViewController!.View!);
-		viewController.AddChildViewController(pageRenderer.ViewController);
-		pageRenderer.ViewController.DidMoveToParentViewController(viewController);
+		var viewController = new ParentViewController(NavigationViewHandler!, NavigationController!, page, MauiContext);
+		var pageViewController = viewController.CurrentView!.ToUIViewController(MauiContext);
+		
+		pageViewController.View!.Frame = viewController.View!.Bounds; // prevents visible page from shrinking on SetViewControllers when UINavigationBar.Translucent is false
+		viewController.View!.AddSubview(pageViewController.View!);
+		viewController.AddChildViewController(pageViewController);
+		pageViewController.DidMoveToParentViewController(viewController);
 
 		return viewController;
 	}

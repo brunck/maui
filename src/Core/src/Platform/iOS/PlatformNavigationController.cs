@@ -228,7 +228,7 @@ public class PlatformNavigationController : UINavigationController
 	}
 }
 
-public class ParentViewController : ContainerViewController
+public class ParentViewController : PageViewController
 {
 	WeakReference<NavigationViewHandler> Handler { get; }
 
@@ -236,10 +236,10 @@ public class ParentViewController : ContainerViewController
 
 	bool _disposed;
 
-	public ParentViewController(NavigationViewHandler handler, PlatformNavigationController navController)
+	public ParentViewController(NavigationViewHandler handler, PlatformNavigationController navController, IView page, IMauiContext mauiContext) : base(page, mauiContext)
 	{
-		Handler = new WeakReference<NavigationViewHandler>(handler);
-		NavController = new WeakReference<PlatformNavigationController>(navController);
+		Handler = new(handler);
+		NavController = new(navController);
 	}
 
 	public void UpdateSafeArea()
@@ -475,8 +475,5 @@ internal class NavigationDelegate : UINavigationControllerDelegate
 		var toolbarElement = handler.NavigationManager?.ToolbarElement;
 		var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
 		toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
-
-		var isTranslucent = navigationController.NavigationBar.Translucent;
-		viewController.EdgesForExtendedLayout = isTranslucent ? UIRectEdge.All : UIRectEdge.None;
 	}
 }
