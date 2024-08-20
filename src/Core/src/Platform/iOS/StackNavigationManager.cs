@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Maui.ApplicationModel;
 using UIKit;
 
 namespace Microsoft.Maui.Platform;
