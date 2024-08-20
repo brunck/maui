@@ -18,28 +18,6 @@ public static class BindingCodeWriter
 		//------------------------------------------------------------------------------
 		#nullable enable
 
-		namespace System.Runtime.CompilerServices
-		{
-			using System;
-			using System.CodeDom.Compiler;
-		
-			{{GeneratedCodeAttribute}}
-			[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-			internal sealed class InterceptsLocationAttribute : Attribute
-			{
-				public InterceptsLocationAttribute(string filePath, int line, int column)
-				{
-					FilePath = filePath;
-					Line = line;
-					Column = column;
-				}
-		
-				public string FilePath { get; }
-				public int Line { get; }
-				public int Column { get; }
-			}
-		}
-
 		namespace Microsoft.Maui.Controls.Generated
 		{
 			using System.CodeDom.Compiler;
@@ -72,6 +50,28 @@ public static class BindingCodeWriter
 		// </auto-generated>
 		//------------------------------------------------------------------------------
 		#nullable enable
+
+		namespace System.Runtime.CompilerServices
+		{
+			using System;
+			using System.CodeDom.Compiler;
+		
+			{{GeneratedCodeAttribute}}
+			[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+			file sealed class InterceptsLocationAttribute : Attribute
+			{
+				public InterceptsLocationAttribute(string filePath, int line, int column)
+				{
+					FilePath = filePath;
+					Line = line;
+					Column = column;
+				}
+		
+				public string FilePath { get; }
+				public int Line { get; }
+				public int Column { get; }
+			}
+		}
 
 		namespace Microsoft.Maui.Controls.Generated
 		{
@@ -254,7 +254,7 @@ public static class BindingCodeWriter
 			Append(binding.MethodType switch
 			{
 				InterceptedMethodType.SetBinding => $"public static void SetBinding{id}",
-				InterceptedMethodType.Create => $"public static TypedBinding<{binding.SourceType}, {binding.PropertyType}> Create{id}",
+				InterceptedMethodType.Create => $"public static BindingBase Create{id}",
 				_ => throw new ArgumentOutOfRangeException(nameof(binding.MethodType))
 			});
 		}
