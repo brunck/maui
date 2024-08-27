@@ -18,17 +18,29 @@ namespace Microsoft.Maui.Controls
 
 		public static void MapBackButtonTitle(IToolbarHandler handler, Toolbar toolbar)
 		{
-			handler.PlatformView.UpdateBackButtonTitle(toolbar);
+			if (handler.PlatformView is MauiNavigationBar navigationBar
+				&& navigationBar.NavigationController.GetTargetOrDefault() is UINavigationController navigationController)
+			{
+				navigationController.UpdateBackButtonTitle(toolbar);
+			}
 		}
 
 		public static void MapTitleIcon(IToolbarHandler handler, Toolbar toolbar)
 		{
-			handler.PlatformView.UpdateTitleArea(toolbar);
+			if (handler.PlatformView is MauiNavigationBar navigationBar
+				&& navigationBar.NavigationController.GetTargetOrDefault() is UINavigationController navigationController)
+			{
+				navigationController.UpdateTitleArea(toolbar);
+			}
 		}
 
 		public static void MapTitleView(IToolbarHandler handler, Toolbar toolbar)
 		{
-			handler.PlatformView.UpdateTitleArea(toolbar);
+			if (handler.PlatformView is MauiNavigationBar navigationBar
+				&& navigationBar.NavigationController.GetTargetOrDefault() is UINavigationController navigationController)
+			{
+				navigationController.UpdateTitleArea(toolbar);
+			}
 		}
 
 		public static void MapIconColor(IToolbarHandler handler, Toolbar toolbar)
@@ -56,10 +68,15 @@ namespace Microsoft.Maui.Controls
 
 		public static void MapToolbarItems(IToolbarHandler handler, Toolbar toolbar)
 		{
-			handler.PlatformView.UpdateToolbarItems(toolbar);
-			if (handler.PlatformView is PlatformNavigationController navController)
+			if (handler.PlatformView is MauiNavigationBar navigationBar
+				&& navigationBar.NavigationController.GetTargetOrDefault() is UINavigationController navigationController)
 			{
-				navController.UpdateSecondaryToolBarVisible();
+				navigationController.UpdateToolbarItems(toolbar);
+
+				if (navigationController is PlatformNavigationController navController)
+				{
+					navController.UpdateSecondaryToolBarVisible();
+				}
 			}
 		}
 	}

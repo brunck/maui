@@ -23,10 +23,18 @@ public class PlatformNavigationController : UINavigationController
 
 	public bool IsDisposed { get => _disposed; }
 
-	public PlatformNavigationController(NavigationViewHandler handler)
+	public PlatformNavigationController(
+		NavigationViewHandler handler, 
+		Type? navigationBarType = null, 
+		Type? toolbarType = null) : base(navigationBarType ?? typeof(UINavigationBar), toolbarType ?? typeof(UIToolbar))
 	{
 		NavigationHandler = new WeakReference<NavigationViewHandler>(handler);
 		Delegate = new NavigationDelegate(this, handler);
+		if (navigationBarType == typeof(MauiNavigationBar))
+		{
+			var navigationBar = new MauiNavigationBar(this);
+			SetValueForKey(navigationBar, new NSString("navigationBar"));
+		}
 	}
 
 	/// <summary>
@@ -475,5 +483,15 @@ internal class NavigationDelegate : UINavigationControllerDelegate
 		var toolbarElement = handler.NavigationManager?.ToolbarElement;
 		var toolbarHandler = toolbarElement?.Toolbar?.Handler as ToolbarHandler;
 		toolbarHandler?._mapper.UpdateProperties(toolbarHandler, toolbarHandler.VirtualView);
+	}
+}
+
+public class MauiNavigationBar : UINavigationBar
+{
+	public WeakReference<PlatformNavigationController> NavigationController { get; }
+
+	public MauiNavigationBar(PlatformNavigationController navigationController)
+	{
+		NavigationController = new WeakReference<PlatformNavigationController>(navigationController);
 	}
 }

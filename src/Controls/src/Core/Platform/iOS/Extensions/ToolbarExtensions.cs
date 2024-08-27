@@ -31,9 +31,8 @@ namespace Microsoft.Maui.Controls.Platform
 			navigationController.NavigationItem.TitleView = titleViewContainer;
 		}
 
-		public static void UpdateBarBackground(this UINavigationController navigationController, Toolbar toolbar)
+		public static void UpdateBarBackground(this UINavigationBar navigationBar, Toolbar toolbar)
 		{
-			var navigationBar = navigationController.NavigationBar;
 			var barBackgroundBrush = toolbar.BarBackground;
 			Graphics.Color? barBackgroundColor = null;
 
@@ -115,11 +114,8 @@ namespace Microsoft.Maui.Controls.Platform
 			viewController.NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = backButtonText, Style = UIBarButtonItemStyle.Plain };
 		}
 
-		
-
-		public static void UpdateBarTextColor(this UINavigationController navigationController, Toolbar toolbar)
+		public static void UpdateBarTextColor(this UINavigationBar navigationBar, Toolbar toolbar)
 		{
-			var navigationBar = navigationController.NavigationBar;
 			var barTextColor = toolbar.BarTextColor;
 
 			// Determine new title text attributes via global static data
@@ -223,10 +219,7 @@ namespace Microsoft.Maui.Controls.Platform
 				}
 			}
 
-			if (primaries != null)
-			{
-				primaries.Reverse();
-			}
+			primaries?.Reverse();
 
 			navigationController!.TopViewController.NavigationItem.SetRightBarButtonItems(primaries == null ? [] : primaries.ToArray(),
 				false);

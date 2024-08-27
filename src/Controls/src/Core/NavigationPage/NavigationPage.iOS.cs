@@ -71,7 +71,7 @@ namespace Microsoft.Maui.Controls
 		{
 			if (handler is IPlatformViewHandler nvh && nvh.ViewController is UINavigationController navigationController && navigationPage.Toolbar != null)
 			{
-				navigationController.UpdateBarTextColor(navigationPage.Toolbar);
+				navigationController.NavigationBar.UpdateBarTextColor(navigationPage.Toolbar);
 				var barTextColor = navigationPage.BarTextColor;
 				var statusBarColorMode = navigationPage.OnThisPlatform().GetStatusBarTextColorMode();
 				navigationController.SetStatusBarStyle(statusBarColorMode, barTextColor);

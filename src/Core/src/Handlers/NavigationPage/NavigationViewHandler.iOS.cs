@@ -19,7 +19,8 @@ public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, U
 
 	protected override UIView CreatePlatformView()
 	{
-		_platformNavigationController ??= new PlatformNavigationController(this);
+		_platformNavigationController ??= new PlatformNavigationController(this, navigationBarType: typeof(MauiNavigationBar));
+		
 		StackNavigationManager = CreateStackNavigationManager();
 
 		if (_platformNavigationController.View is null)
