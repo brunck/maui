@@ -11,6 +11,13 @@ Microsoft.Maui.Handlers.IHybridPlatformWebView.SendRawMessage(string! rawMessage
 Microsoft.Maui.Handlers.IHybridWebViewHandler
 Microsoft.Maui.Handlers.IHybridWebViewHandler.PlatformView.get -> WebKit.WKWebView!
 Microsoft.Maui.Handlers.IHybridWebViewHandler.VirtualView.get -> Microsoft.Maui.IHybridWebView!
+Microsoft.Maui.Hosting.HybridWebViewServiceCollectionExtensions
+Microsoft.Maui.HybridWebViewInvokeJavaScriptRequest
+Microsoft.Maui.HybridWebViewInvokeJavaScriptRequest.HybridWebViewInvokeJavaScriptRequest(string! methodName, System.Text.Json.Serialization.Metadata.JsonTypeInfo! returnTypeJsonTypeInfo, object?[]? paramValues, System.Text.Json.Serialization.Metadata.JsonTypeInfo?[]? paramJsonTypeInfos) -> void
+Microsoft.Maui.HybridWebViewInvokeJavaScriptRequest.MethodName.get -> string!
+Microsoft.Maui.HybridWebViewInvokeJavaScriptRequest.ParamJsonTypeInfos.get -> System.Text.Json.Serialization.Metadata.JsonTypeInfo?[]?
+Microsoft.Maui.HybridWebViewInvokeJavaScriptRequest.ParamValues.get -> object?[]?
+Microsoft.Maui.HybridWebViewInvokeJavaScriptRequest.ReturnTypeJsonTypeInfo.get -> System.Text.Json.Serialization.Metadata.JsonTypeInfo!
 Microsoft.Maui.HybridWebViewRawMessage
 Microsoft.Maui.HybridWebViewRawMessage.HybridWebViewRawMessage() -> void
 Microsoft.Maui.HybridWebViewRawMessage.Message.get -> string?
@@ -20,8 +27,14 @@ Microsoft.Maui.IHybridWebView
 Microsoft.Maui.IHybridWebView.DefaultFile.get -> string?
 Microsoft.Maui.IHybridWebView.EvaluateJavaScriptAsync(string! script) -> System.Threading.Tasks.Task<string?>!
 Microsoft.Maui.IHybridWebView.HybridRoot.get -> string?
-Microsoft.Maui.IHybridWebView.MessageReceived(string! rawMessage) -> void
+Microsoft.Maui.IHybridWebView.InvokeJavaScriptAsync<TReturnType>(string! methodName, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TReturnType>! returnTypeJsonTypeInfo, object?[]? paramValues = null, System.Text.Json.Serialization.Metadata.JsonTypeInfo?[]? paramJsonTypeInfos = null) -> System.Threading.Tasks.Task<TReturnType?>!
+Microsoft.Maui.IHybridWebView.InvokeJavaScriptTarget.get -> object?
+Microsoft.Maui.IHybridWebView.InvokeJavaScriptTarget.set -> void
+Microsoft.Maui.IHybridWebView.InvokeJavaScriptType.get -> System.Type?
+Microsoft.Maui.IHybridWebView.InvokeJavaScriptType.set -> void
+Microsoft.Maui.IHybridWebView.RawMessageReceived(string! rawMessage) -> void
 Microsoft.Maui.IHybridWebView.SendRawMessage(string! rawMessage) -> void
+Microsoft.Maui.IHybridWebView.SetInvokeJavaScriptTarget<T>(T! target) -> void
 Microsoft.Maui.ITitleBar
 Microsoft.Maui.ITitleBar.PassthroughElements.get -> System.Collections.Generic.IList<Microsoft.Maui.IView!>!
 Microsoft.Maui.ITitleBar.Subtitle.get -> string?
@@ -29,8 +42,6 @@ Microsoft.Maui.ITitleBar.Title.get -> string?
 Microsoft.Maui.IWebView.ProcessTerminated(Microsoft.Maui.WebProcessTerminatedEventArgs! args) -> void
 *REMOVED*Microsoft.Maui.IWindow.Content.get -> Microsoft.Maui.IView!
 Microsoft.Maui.IWindow.Content.get -> Microsoft.Maui.IView?
-Microsoft.Maui.LifecycleEvents.iOSLifecycle.ReceivedRemoteNotification
-Microsoft.Maui.LifecycleEvents.iOSLifecycle.RegisteredForRemoteNotifications
 Microsoft.Maui.Platform.MauiHybridWebView
 Microsoft.Maui.Platform.MauiHybridWebView.MauiHybridWebView(Microsoft.Maui.Handlers.HybridWebViewHandler! handler, CoreGraphics.CGRect frame, WebKit.WKWebViewConfiguration! configuration) -> void
 Microsoft.Maui.Platform.MauiHybridWebView.SendRawMessage(string! rawMessage) -> void
@@ -51,74 +62,21 @@ static Microsoft.Maui.ElementHandlerExtensions.IsConnected(this Microsoft.Maui.I
 static Microsoft.Maui.Handlers.ApplicationHandler.MapActivateWindow(Microsoft.Maui.Handlers.ApplicationHandler! handler, Microsoft.Maui.IApplication! application, object? args) -> void
 static Microsoft.Maui.Handlers.HybridWebViewHandler.CommandMapper -> Microsoft.Maui.CommandMapper<Microsoft.Maui.IHybridWebView!, Microsoft.Maui.Handlers.IHybridWebViewHandler!>!
 static Microsoft.Maui.Handlers.HybridWebViewHandler.MapEvaluateJavaScriptAsync(Microsoft.Maui.Handlers.IHybridWebViewHandler! handler, Microsoft.Maui.IHybridWebView! hybridWebView, object? arg) -> void
+static Microsoft.Maui.Handlers.HybridWebViewHandler.MapInvokeJavaScriptAsync(Microsoft.Maui.Handlers.IHybridWebViewHandler! handler, Microsoft.Maui.IHybridWebView! hybridWebView, object? arg) -> void
 static Microsoft.Maui.Handlers.HybridWebViewHandler.Mapper -> Microsoft.Maui.IPropertyMapper<Microsoft.Maui.IHybridWebView!, Microsoft.Maui.Handlers.IHybridWebViewHandler!>!
 static Microsoft.Maui.Handlers.HybridWebViewHandler.MapSendRawMessage(Microsoft.Maui.Handlers.IHybridWebViewHandler! handler, Microsoft.Maui.IHybridWebView! hybridWebView, object? arg) -> void
+static Microsoft.Maui.Hosting.HybridWebViewServiceCollectionExtensions.AddHybridWebViewDeveloperTools(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Microsoft.Maui.Keyboard.Date.get -> Microsoft.Maui.Keyboard!
 static Microsoft.Maui.Keyboard.Password.get -> Microsoft.Maui.Keyboard!
 static Microsoft.Maui.Keyboard.Time.get -> Microsoft.Maui.Keyboard!
-static Microsoft.Maui.LifecycleEvents.iOSLifecycleBuilderExtensions.ReceivedRemoteNotification(this Microsoft.Maui.LifecycleEvents.IiOSLifecycleBuilder! lifecycle, Microsoft.Maui.LifecycleEvents.iOSLifecycle.ReceivedRemoteNotification! del) -> Microsoft.Maui.LifecycleEvents.IiOSLifecycleBuilder!
-static Microsoft.Maui.LifecycleEvents.iOSLifecycleBuilderExtensions.RegisteredForRemoteNotifications(this Microsoft.Maui.LifecycleEvents.IiOSLifecycleBuilder! lifecycle, Microsoft.Maui.LifecycleEvents.iOSLifecycle.RegisteredForRemoteNotifications! del) -> Microsoft.Maui.LifecycleEvents.IiOSLifecycleBuilder!
 *REMOVED*static Microsoft.Maui.Platform.ElementExtensions.ToUIViewController(this Microsoft.Maui.IElement! view, Microsoft.Maui.IMauiContext! context) -> UIKit.UIViewController!
 static Microsoft.Maui.Platform.ElementExtensions.ToUIViewController(this Microsoft.Maui.IElement? view, Microsoft.Maui.IMauiContext! context) -> UIKit.UIViewController!
 static Microsoft.Maui.Platform.UIWindowExtensions.GetWindow(this UIKit.UIWindow? platformWindow) -> Microsoft.Maui.IWindow?
 static Microsoft.Maui.Platform.UIWindowExtensions.GetWindow(this UIKit.UIWindowScene? windowScene) -> Microsoft.Maui.IWindow?
 static Microsoft.Maui.ViewExtensions.DisconnectHandlers(this Microsoft.Maui.IView! view) -> void
-virtual Microsoft.Maui.MauiUIApplicationDelegate.ReceivedRemoteNotification(UIKit.UIApplication! application, Foundation.NSDictionary! userInfo) -> void
-virtual Microsoft.Maui.MauiUIApplicationDelegate.RegisteredForRemoteNotifications(UIKit.UIApplication! application, Foundation.NSData! deviceToken) -> void
 override Microsoft.Maui.Platform.MauiCALayer.AddAnimation(CoreAnimation.CAAnimation! animation, string? key) -> void
 *REMOVED*override Microsoft.Maui.Handlers.BorderHandler.ConnectHandler(Microsoft.Maui.Platform.ContentView! platformView) -> void
-Microsoft.Maui.Handlers.ToolbarHandler.NavigationController.get -> UIKit.UINavigationController!
-Microsoft.Maui.Handlers.NavigationViewHandler.NavigationManager.get -> Microsoft.Maui.Platform.NavigationManager?
-Microsoft.Maui.Handlers.NavigationViewHandler.StackNavigationManager.get -> Microsoft.Maui.Platform.StackNavigationManager?
-Microsoft.Maui.Platform.MauiNavigationBar
-Microsoft.Maui.Platform.MauiNavigationBar.MauiNavigationBar(Microsoft.Maui.Platform.PlatformNavigationController! navigationController) -> void
-Microsoft.Maui.Platform.MauiNavigationBar.NavigationController.get -> System.WeakReference<Microsoft.Maui.Platform.PlatformNavigationController!>!
-Microsoft.Maui.Platform.NavigationManager
-Microsoft.Maui.Platform.NavigationManager.NavigationController.get -> UIKit.UINavigationController?
-Microsoft.Maui.Platform.NavigationManager.NavigationManager(Microsoft.Maui.IMauiContext! mauiContext) -> void
-Microsoft.Maui.Platform.NavigationManager.SetNavigationController(UIKit.UINavigationController! navigationController) -> void
-Microsoft.Maui.Platform.NavigationManager.SetToolbarElement(Microsoft.Maui.IToolbarElement! toolbarElement) -> void
-Microsoft.Maui.Platform.NavigationManager.ToolbarElement.get -> Microsoft.Maui.IToolbarElement?
-Microsoft.Maui.Platform.ParentViewController
-Microsoft.Maui.Platform.ParentViewController.ParentViewController(Microsoft.Maui.Handlers.NavigationViewHandler! handler, Microsoft.Maui.Platform.PlatformNavigationController! navController, Microsoft.Maui.IView! page, Microsoft.Maui.IMauiContext! mauiContext) -> void
-Microsoft.Maui.Platform.ParentViewController.UpdateSafeArea() -> void
-Microsoft.Maui.Platform.PlatformNavigationController
-Microsoft.Maui.Platform.PlatformNavigationController.IsDisposed.get -> bool
-Microsoft.Maui.Platform.PlatformNavigationController.NavigationHandler.get -> System.WeakReference<Microsoft.Maui.Handlers.NavigationViewHandler!>!
-Microsoft.Maui.Platform.PlatformNavigationController.PlatformNavigationController(Microsoft.Maui.Handlers.NavigationViewHandler! handler, System.Type? navigationBarType = null, System.Type? toolbarType = null) -> void
-Microsoft.Maui.Platform.PlatformNavigationController.SecondaryToolbar.get -> System.WeakReference<UIKit.UIToolbar!>!
-Microsoft.Maui.Platform.PlatformNavigationController.SecondaryToolbar.set -> void
-Microsoft.Maui.Platform.PlatformNavigationController.UpdateHideNavigationBarSeparator(bool shouldHideNavigationBarSeparator) -> void
-Microsoft.Maui.Platform.PlatformNavigationController.UpdateHomeIndicatorAutoHidden() -> void
-Microsoft.Maui.Platform.PlatformNavigationController.UpdateSecondaryToolBarVisible() -> void
-Microsoft.Maui.Platform.PlatformNavigationController.UpdateStatusBarHidden() -> void
-Microsoft.Maui.Platform.PlatformNavigationController.ValidateNavBarExists(bool newNavigationPageHasNavBar) -> void
-Microsoft.Maui.Platform.StackNavigationManager
-Microsoft.Maui.Platform.StackNavigationManager.StackNavigationManager(Microsoft.Maui.IMauiContext! mauiContext) -> void
-Microsoft.Maui.Platform.UINavigationBarExtensions
-Microsoft.Maui.Platform.UINavigationControllerExtensions
-Microsoft.Maui.Platform.UIViewControllerExtensions
-override Microsoft.Maui.Handlers.NavigationViewHandler.ConnectHandler(UIKit.UIView! platformView) -> void
-override Microsoft.Maui.Handlers.NavigationViewHandler.DisconnectHandler(UIKit.UIView! platformView) -> void
-override Microsoft.Maui.Platform.ParentViewController.Dispose(bool disposing) -> void
-override Microsoft.Maui.Platform.ParentViewController.ViewDidDisappear(bool animated) -> void
-override Microsoft.Maui.Platform.ParentViewController.ViewDidLayoutSubviews() -> void
-override Microsoft.Maui.Platform.ParentViewController.ViewWillAppear(bool animated) -> void
-override Microsoft.Maui.Platform.PlatformNavigationController.Dispose(bool disposing) -> void
-override Microsoft.Maui.Platform.PlatformNavigationController.ViewDidLoad() -> void
-override Microsoft.Maui.Platform.PlatformNavigationController.ViewWillLayoutSubviews() -> void
-static Microsoft.Maui.Handlers.ToolbarHandler.MapBackButtonVisible(Microsoft.Maui.Handlers.IToolbarHandler! handler, Microsoft.Maui.IToolbar! toolbar) -> void
-static Microsoft.Maui.Handlers.ToolbarHandler.MapIsVisible(Microsoft.Maui.Handlers.IToolbarHandler! handler, Microsoft.Maui.IToolbar! toolbar) -> void
-static Microsoft.Maui.Platform.UINavigationBarExtensions.GetEmptyBackIndicatorImage() -> UIKit.UIImage!
-static Microsoft.Maui.Platform.UINavigationBarExtensions.SetupDefaultNavigationBarAppearance(this UIKit.UINavigationBar! navBar) -> void
-static Microsoft.Maui.Platform.UINavigationControllerExtensions.UpdateBackButtonVisibility(this UIKit.UINavigationController! navigationController, bool backButtonVisible) -> void
-static Microsoft.Maui.Platform.UINavigationControllerExtensions.UpdateNavigationBarVisibility(this UIKit.UINavigationController! navigationController, bool isNavigationbarVisible, bool animated) -> void
-static Microsoft.Maui.Platform.UIViewControllerExtensions.InvalidateMeasure(this UIKit.UIViewController! viewController) -> void
-static Microsoft.Maui.Platform.UIViewControllerExtensions.UpdateBackButtonTitle(this UIKit.UIViewController! viewController, string! backButtonTitle) -> void
-static Microsoft.Maui.Platform.UIViewControllerExtensions.UpdateNavigationBarTitle(this UIKit.UIViewController! viewController, string! title) -> void
-virtual Microsoft.Maui.Handlers.NavigationViewHandler.CreateStackNavigationManager() -> Microsoft.Maui.Platform.StackNavigationManager!
-virtual Microsoft.Maui.Platform.PlatformNavigationController.BackButtonClicked() -> void
-virtual Microsoft.Maui.Platform.PlatformNavigationController.ShouldPopItem(UIKit.UINavigationBar! _, UIKit.UINavigationItem! __) -> bool
-virtual Microsoft.Maui.Platform.StackNavigationManager.Connect(Microsoft.Maui.IStackNavigationView! virtualView, Microsoft.Maui.Platform.PlatformNavigationController! navigationController, Microsoft.Maui.Handlers.NavigationViewHandler! navigationViewHandler) -> void
-virtual Microsoft.Maui.Platform.StackNavigationManager.Disconnect(Microsoft.Maui.IStackNavigationView! virtualView, UIKit.UINavigationController! navigationController) -> void
-virtual Microsoft.Maui.Platform.StackNavigationManager.RequestNavigation(Microsoft.Maui.NavigationRequest! request) -> void
+override Microsoft.Maui.Platform.MauiCALayer.Dispose(bool disposing) -> void
+override Microsoft.Maui.Platform.MauiCALayer.RemoveFromSuperLayer() -> void
+override Microsoft.Maui.Handlers.BorderHandler.PlatformArrange(Microsoft.Maui.Graphics.Rect rect) -> void
+override Microsoft.Maui.Handlers.EditorHandler.NeedsContainer.get -> bool
